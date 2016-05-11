@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HackerSpray.Module", "Hacke
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HackerSpray.UnitTests", "HackerSpray.UnitTests\HackerSpray.UnitTests.csproj", "{8D6406C7-F4A5-4321-9D5F-793B8CF181B8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HackerSpray.SampleWebSite", "HackerSpray.SampleWebSite\HackerSpray.SampleWebSite.csproj", "{028608B7-D771-4EBF-B0E3-686F813F227B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{8D6406C7-F4A5-4321-9D5F-793B8CF181B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8D6406C7-F4A5-4321-9D5F-793B8CF181B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8D6406C7-F4A5-4321-9D5F-793B8CF181B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{028608B7-D771-4EBF-B0E3-686F813F227B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{028608B7-D771-4EBF-B0E3-686F813F227B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{028608B7-D771-4EBF-B0E3-686F813F227B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{028608B7-D771-4EBF-B0E3-686F813F227B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

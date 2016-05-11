@@ -1,0 +1,14 @@
+﻿@using HackerSpray.SampleWebSite.Models
+@using HackerSpray.SampleWebSite.Constants
+@{ User user = Session[SessionConstants.USER] as User; }
+@if (user != null)
+{    
+    <li><a href="#">Welcome <strong>@user.Username</strong>!</a></li>
+    <li>@Html.ActionLink("Log Off", "LogOff", "Account")</li>
+}
+else
+{
+    <li>
+        @Html.ActionLink("Log On", "LogOn", "Account")
+    </li>
+}
