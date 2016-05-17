@@ -21,7 +21,7 @@ namespace HackerSpray.Module
             MaxHitsPerOriginInterval = TimeSpan.FromMinutes(15),
             OriginBlacklistInterval = TimeSpan.FromMinutes(15)
         };
-        public enum DefenceResult
+        public enum Result
         {
             Allowed = 0,
             OriginBlocked,
@@ -30,48 +30,48 @@ namespace HackerSpray.Module
             TooManyHitsOnKey,
             TooManyHitsOnKeyFromOrigin
         }
-        public static async Task<DefenceResult> Defend(string key, IPAddress origin)
+        public static async Task<Result> Defend(string key, IPAddress origin)
         {
             if (await Store.IsOriginBlacklisted(origin))
-                return DefenceResult.OriginBlocked;
+                return Result.OriginBlocked;
 
             var hitStats = await Store.IncrementHit(key, origin);
 
             if (hitStats.HitsOnKeyFromOrigin > Config.MaxHitsPerKeyPerOrigin)
-                return DefenceResult.TooManyHitsOnKeyFromOrigin;
+                return Result.TooManyHitsOnKeyFromOrigin;
 
             if (hitStats.HitsOnKey > Config.MaxHitsPerKey)
-                return DefenceResult.TooManyHitsOnKey;
+                return Result.TooManyHitsOnKey;
 
             if (hitStats.HitsFromOrigin > Config.MaxHitsPerOrigin)
-                return DefenceResult.TooManyHitsFromOrigin;
+                return Result.TooManyHitsFromOrigin;
             
             if (await Store.IsKeyBlacklisted(key))
-                return DefenceResult.KeyBlocked;
+                return Result.KeyBlocked;
             
-            return DefenceResult.Allowed;
+            return Result.Allowed;
         }
 
-        public static async Task<DefenceResult> Defend(string key, IPAddress origin, TimeSpan interval, long maxHit)
+        public static async Task<Result> Defend(string key, IPAddress origin, TimeSpan interval, long maxHit)
         {
             if (await Store.IsOriginBlacklisted(origin))
-                return DefenceResult.OriginBlocked;
+                return Result.OriginBlocked;
 
             var hitStats = await Store.IncrementHit(key, origin, interval);
 
             if (hitStats.HitsOnKeyFromOrigin > Config.MaxHitsPerKeyPerOrigin)
-                return DefenceResult.TooManyHitsOnKeyFromOrigin;
+                return Result.TooManyHitsOnKeyFromOrigin;
 
             if (hitStats.HitsOnKey > maxHit)
-                return DefenceResult.TooManyHitsOnKey;
+                return Result.TooManyHitsOnKey;
 
             if (hitStats.HitsFromOrigin > Config.MaxHitsPerOrigin)
-                return DefenceResult.TooManyHitsFromOrigin;
+                return Result.TooManyHitsFromOrigin;
 
             if (await Store.IsKeyBlacklisted(key))
-                return DefenceResult.KeyBlocked;
+                return Result.KeyBlocked;
 
-            return DefenceResult.Allowed;
+            return Result.Allowed;
         }
 
         public static Task<bool> BlacklistKey(string key, TimeSpan expiration)
@@ -97,6 +97,16 @@ namespace HackerSpray.Module
         public static Task<bool> WhitelistOrigin(IPAddress origin)
         {
             return Store.WhitelistOrigin(origin);
+        }
+
+        public static Task<bool> IsKeyBlacklisted(string key)
+        {
+            return Store.IsKeyBlacklisted(key);
+        }
+
+        public static Task<bool> isOriginBlacklisted(IPAddress origin)
+        {
+            return Store.IsOriginBlacklisted(origin);
         }
     }
 }

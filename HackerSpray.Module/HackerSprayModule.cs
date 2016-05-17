@@ -1,10 +1,11 @@
 ﻿using HackerSpray.Module;
 using System;
+using System.Configuration;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace HackerSpray.SampleWebSite.Modules
+namespace HackerSpray.Module
 {
     public class HackerSprayModule : IHttpModule
     {
@@ -21,9 +22,7 @@ namespace HackerSpray.SampleWebSite.Modules
         }
 
         public void Init(HttpApplication context)
-        {
-            HackerSprayer.Store = new RedisDefenceStore("localhost", "HackerSpray.SampleWebSite-", HackerSprayer.Config);
-                
+        {               
             var wrapper = new EventHandlerTaskAsyncHelper(DefendRequest);
             context.AddOnBeginRequestAsync(wrapper.BeginEventHandler, wrapper.EndEventHandler);
         }       
@@ -32,13 +31,21 @@ namespace HackerSpray.SampleWebSite.Modules
         {
             var context = HttpContext.Current;
 
+            // Block too many HTTP POST attempt on LogOn page
             if (context.Request.HttpMethod == "POST" && context.Request.Path == "/Account/LogOn")
             {
-                var result = await HackerSprayer.Defend(context.Request.Path, IPAddress.Parse(context.Request.UserHostAddress));
-                if (result != HackerSprayer.DefenceResult.Allowed)
+                var ip = IPAddress.Parse(context.Request.UserHostAddress).MapToIPv4();
+                var result = await HackerSprayer.Defend(context.Request.Path, ip);
+
+                // Blacklist origin. After that, it becomes least expensive to block requests
+                if (result == HackerSprayer.Result.TooManyHitsFromOrigin
+                    || result == HackerSprayer.Result.TooManyHitsOnKeyFromOrigin)
+                    await HackerSprayer.BlacklistOrigin(ip);
+
+                if (result != HackerSprayer.Result.Allowed)
                 {
-                    context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-                    context.Response.Status = Enum.GetName(typeof(HackerSprayer.DefenceResult), result);
+                    context.Response.StatusCode = (int)HttpStatusCode.MethodNotAllowed;
+                    context.Response.StatusDescription = Enum.GetName(typeof(HackerSprayer.Result), result);
                     context.Response.End();
                 }
             }

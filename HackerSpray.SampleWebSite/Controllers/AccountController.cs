@@ -7,16 +7,23 @@ using System.Web.Routing;
 using System.Web.Security;
 using HackerSpray.SampleWebSite.Models;
 using HackerSpray.SampleWebSite.Constants;
+using HackerSpray.Module;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace HackerSpray.SampleWebSite.Controllers
 {
 	public class AccountController : Controller
 	{
+        public static int MaxValidLogin = 10;
+        public static TimeSpan MaxValidLoginInterval = TimeSpan.FromMinutes(10);
 
-		//
-		// GET: /Account/LogOn
+        public static int MaxInvalidLogin = 3;
+        public static TimeSpan MaxInvalidLoginInterval = TimeSpan.FromMinutes(15);
+        //
+        // GET: /Account/LogOn
 
-		public ActionResult LogOn()
+        public ActionResult LogOn()
 		{
 			return View("~/Views/Account/LogOn.cshtml");
         }
@@ -25,18 +32,58 @@ namespace HackerSpray.SampleWebSite.Controllers
 		// POST: /Account/LogOn
 
 		[HttpPost]
-		public ActionResult LogOn(string username, string password)
-		{
-			var user = DataStore.Users.Where(u => u.Username == username && u.Password == password).FirstOrDefault();
+		public async Task<ActionResult> LogOn(string username, string password)
+		{            
+            var invalidLoginkey = "InvalidLogin-" + username;
+            
+            // If username is blacklisted for some reason, reject
+            if (await HackerSprayer.IsKeyBlacklisted(invalidLoginkey))
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+            }
+
+            var user = DataStore.Users.Where(u => u.Username == username && u.Password == password).FirstOrDefault();
 
 			if (user != null)
 			{
-				Session[SessionConstants.USER] = user;
-                
-				return RedirectToAction("Index", "Home");
+                // Prevent DOS attack using valid username, password. 
+                // Maybe trying to generate many Session ID and guess
+                // how it is generated.
+                var validLoginKey = "ValidLogin-" + username;
+
+                var result = await HackerSprayer.Defend(
+                    validLoginKey, 
+                    IPAddress.Parse(Request.UserHostAddress).MapToIPv4(), 
+                    MaxValidLoginInterval, 
+                    MaxValidLogin);
+
+                if (result == HackerSprayer.Result.TooManyHitsOnKey)
+                {
+                    // Too many valid login on same username. 
+                    await HackerSprayer.BlacklistKey(validLoginKey, MaxValidLoginInterval);
+                    return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+                }
+                else
+                {
+                    Session[SessionConstants.USER] = user;
+                    return RedirectToAction("Index", "Home");
+                }
 			}
 			else
-			{
+			{            
+                // Check for too many invalid login on a username    
+                var result = await HackerSprayer.Defend(
+                    invalidLoginkey, 
+                    IPAddress.Parse(Request.UserHostAddress).MapToIPv4(), 
+                    MaxInvalidLoginInterval,
+                    MaxInvalidLogin);
+
+                if (result == HackerSprayer.Result.TooManyHitsOnKey)
+                {
+                    await HackerSprayer.BlacklistKey(invalidLoginkey, MaxInvalidLoginInterval);
+                    return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+                }
+
 				TempData[TempDataConstants.ERROR_MESSAGE] = "Invalid username or password";
 				return View("~/Views/Account/LogOn.cshtml");
             }

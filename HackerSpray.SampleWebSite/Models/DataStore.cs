@@ -14,11 +14,11 @@ namespace HackerSpray.SampleWebSite.Models
 		{
 			users = new List<User>
 			{ 
-				new User { Username = "jpage", Email="jpage@ledzeppelin.com", FirstName = "Jimmy", LastName = "Page", Password="zO$0" },
-				new User { Username = "tyorke", Email="thom@radiohead.com", FirstName = "Thom", LastName = "York", Password="V3g@n" },
-				new User { Username = "ecostello", Email="elvis@elviscostello.com", FirstName = "Elvis", LastName = "Costello", Password="N0rth" },
-				new User { Username = "cmeloy", Email="cmeloy@thedecemberists.com", FirstName = "Colin", LastName = "Meloy", Password="P0rtLand" },
-				new User { Username = "sgossard", Email="stone@pearljam.com", FirstName = "Stone", LastName = "Gossard", Password="se@TTle" }
+				new User { Username = "user1", Email="user1@user1.com", FirstName = "Jimmy", LastName = "Page", Password="user1" },
+				new User { Username = "user2", Email="user2@user2.com", FirstName = "Thom", LastName = "York", Password="user2" },
+				new User { Username = "user3", Email="user3@user3.com", FirstName = "Elvis", LastName = "Costello", Password="user3" },
+				new User { Username = "user4", Email="user4@user4.com", FirstName = "Colin", LastName = "Meloy", Password="user4" },
+				new User { Username = "user5", Email="user5@user5.com", FirstName = "Stone", LastName = "Gossard", Password="user5" }
 			};
 		}
 		

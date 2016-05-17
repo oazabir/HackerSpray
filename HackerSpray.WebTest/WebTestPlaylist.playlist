@@ -1,0 +1,1 @@
+<Playlist Version="1.0"><Add Test="HackerSpray.WebTest.TestAccountController.TestValidLoginBruteForce" /><Add Test="HackerSpray.WebTest.TestAccountController.TestValidLogin" /><Add Test="HackerSpray.WebTest.TestAccountController.TestInvalidLoginBruteForce" /></Playlist>

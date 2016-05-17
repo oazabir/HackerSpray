@@ -5,14 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 using StackExchange.Redis;
 using System.Net;
+using System.Threading;
 
 namespace HackerSpray.Module
 {
     public class RedisDefenceStore : IDefenceStore
     {
-        private const string BLACKLIST_KEY = "BLACKLISTS-KEY";
-        private const string BLACKLIST_ORIGIN = "BLACKLISTS-ORIGIN";
-        private const string BLACKLIST_ORIGIN_RANGE = "BLACKLISTS-ORIGIN-RANGE";
+        private const string BLACKLIST_KEY = "BLACKLISTS-KEY-";
+        private const string BLACKLIST_ORIGIN = "BLACKLISTS-ORIGIN-";
+        private const string BLACKLIST_ORIGIN_RANGE = "BLACKLISTS-ORIGIN-RANGE-";
 
         private static object lockObject = new object();
         private static ConnectionMultiplexer redis;
@@ -28,6 +29,8 @@ namespace HackerSpray.Module
                 {
                     if(redis == null)
                         redis = ConnectionMultiplexer.Connect(connectionString);
+
+                    Thread.Sleep(1000);
                 }
             }
 
@@ -94,56 +97,29 @@ namespace HackerSpray.Module
             var originkey = prefix + "origin-" + originValue;
             var keyKey = prefix + "key-" + key;
             var keyoriginkey = prefix + "key-" + key + "-origin-" + originValue;
-            var task1 = this.db.StringGetAsync(originkey);
-            var task2 = this.db.StringGetAsync(keyKey);
-            var task3 = this.db.StringGetAsync(keyoriginkey);
+            var originTask = this.db.StringIncrementAsync(originkey);
+            var keyTask = this.db.StringIncrementAsync(keyKey);
+            var keyOriginTask = this.db.StringIncrementAsync(keyoriginkey);
 
-            await Task.WhenAll(task1, task2, task3);
+            await Task.WhenAll(originTask, keyTask, keyOriginTask);
 
+            stats.HitsFromOrigin = originTask.Result;
+            stats.HitsOnKey = keyTask.Result;
+            stats.HitsOnKeyFromOrigin = keyOriginTask.Result;
+
+            var now = DateTime.Now;
+            // If any of the counter was created for the first time,
+            // need to set expiration time for them.
             var writeTasks = new List<Task>();
+            if (originTask.Result == 1)
+                writeTasks.Add(this.db.KeyExpireAsync(originkey, now + this.config.MaxHitsPerOriginInterval));
+            if (keyTask.Result == 1)
+                writeTasks.Add(this.db.KeyExpireAsync(keyKey, now + keyInterval));
+            if (keyOriginTask.Result == 1)
+                writeTasks.Add(this.db.KeyExpireAsync(keyoriginkey, now + this.config.MaxHitsPerKeyPerOriginInterval));
 
-            long numericValue;
-            if (task1.Result.HasValue)
-            {
-                if (task1.Result.TryParse(out numericValue))
-                    stats.HitsFromOrigin = numericValue;
-
-                writeTasks.Add(this.db.StringIncrementAsync(originkey));
-                stats.HitsFromOrigin++;
-            }
-            else
-            {
-                writeTasks.Add(this.db.StringSetAsync(originkey, 1, this.config.MaxHitsPerOriginInterval));
-            }
-
-
-            if (task2.Result.HasValue)
-            {
-                if (task2.Result.TryParse(out numericValue))
-                    stats.HitsOnKey = numericValue;
-
-                writeTasks.Add(this.db.StringIncrementAsync(keyKey));
-                stats.HitsOnKey++;
-            }
-            else
-            {
-                writeTasks.Add(this.db.StringSetAsync(keyKey, 1, keyInterval));
-            }
-
-            if (task3.Result.HasValue)
-            {
-                if (task3.Result.TryParse(out numericValue))
-                    stats.HitsOnKeyFromOrigin = numericValue;
-
-                writeTasks.Add(this.db.StringIncrementAsync(keyoriginkey));
-                stats.HitsOnKeyFromOrigin++;
-            }
-            else
-            {
-                writeTasks.Add(this.db.StringSetAsync(keyoriginkey, 1, this.config.MaxHitsPerKeyPerOriginInterval));
-            }
-
-            await Task.WhenAll(writeTasks);
+            if (writeTasks.Count > 0)
+                await Task.WhenAll(writeTasks);
 
             return stats;
         }
