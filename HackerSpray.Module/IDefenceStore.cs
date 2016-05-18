@@ -11,8 +11,8 @@ namespace HackerSpray.Module
     {
         Task<HitStats> IncrementHit(string key, IPAddress origin);
         Task<HitStats> IncrementHit(string key, IPAddress origin, TimeSpan keyInterval);
-        Task<int> GetHitsForKey(string key);
-        Task<int> GetHitsFromOrigin(IPAddress origin);
+        Task<long> GetHitsForKey(string key);
+        Task<long> GetHitsFromOrigin(IPAddress origin);
         Task<bool> WhitelistKey(string key);
         Task<bool> BlacklistKey(string key, TimeSpan expiry);
         Task<string[]> GetKeyBlacklists(string key);

@@ -1,4 +1,5 @@
 ﻿@model HackerSpray.SampleWebSite.Models.User
+@using HackerSpray.SampleWebSite.Constants
 
 @{
     ViewBag.Title = "Log On";
@@ -35,7 +36,7 @@
                 @Html.PasswordFor(m => m.Password)
                 @Html.ValidationMessageFor(m => m.Password)
             </div>         
-
+            @TempData[TempDataConstants.ERROR_MESSAGE]
             <p>
                 <input type="submit" value="Log On" />
             </p>

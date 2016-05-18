@@ -4,6 +4,7 @@ using HackerSpray.Module;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace HackerSpray.UnitTests
 {
@@ -11,7 +12,13 @@ namespace HackerSpray.UnitTests
     {
         public static TResult Run<TResult>(this Task<TResult> t)
         {
-            return t.GetAwaiter().GetResult();
+            DateTime start = DateTime.Now;
+            var result = t.GetAwaiter().GetResult();
+            DateTime end = DateTime.Now;
+            if ((end - start).TotalMilliseconds > 10)
+                Debug.Print("Took more than 10ms! HackerSpray cannot be this slow!");
+
+            return result;
         }
 
     }
@@ -30,8 +37,9 @@ namespace HackerSpray.UnitTests
             HackerSprayer.Config.MaxHitsPerKeyPerOriginInterval = TimeSpan.FromMinutes(1);
 
             //HackerSprayer.Store = new RedisDefenceStore("localhost", "HttpDefenceTest-", HackerSprayer.Config);            
-            //HackerSprayer.Store = new RedisDefenceStore("10.187.146.206:7001,10.187.146.206:7002,10.187.146.206:7003,10.187.146.207:7001,10.187.146.207:7002,10.187.146.207:7003", "HttpDefenceTest-", HackerSprayer.Config);
-            HackerSprayer.Store = new RedisDefenceStore2("data source=127.0.0.1:6379", "HttpDefenceTest-", HackerSprayer.Config);
+            HackerSprayer.Store = new RedisDefenceStore("10.187.146.206:7001,10.187.146.206:7002,10.187.146.206:7003,10.187.146.207:7001,10.187.146.207:7002,10.187.146.207:7003", "HttpDefenceTest-", HackerSprayer.Config);
+            //HackerSprayer.Store = new RedisDefenceStore2("data source=127.0.0.1:6379", "HttpDefenceTest-", HackerSprayer.Config);
+            //HackerSprayer.Store = new RedisDefenceStore2("data source=10.187.146.206:7001", "HttpDefenceTest-", HackerSprayer.Config);
         }
 
         private IPAddress GetRandomIP()
@@ -66,8 +74,7 @@ namespace HackerSpray.UnitTests
             {
                 Assert.AreEqual(
                     HackerSprayer.Result.Allowed,
-                    HackerSprayer.Defend(fixedKey, GetRandomIP()).Run()
-                    );
+                    HackerSprayer.Defend(fixedKey, GetRandomIP()).Run());
             }
 
             Assert.AreEqual(
@@ -207,7 +214,7 @@ namespace HackerSpray.UnitTests
         }
 
         [TestMethod]
-        public void TestKeyBlaclistingAndWhitelisting()
+        public void TestKeyBlacklistingAndWhitelisting()
         {
             var ip = GetRandomIP();
             var key = GetRandomKey();

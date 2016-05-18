@@ -34,6 +34,13 @@ namespace HackerSpray.SampleWebSite.Controllers
 		[HttpPost]
 		public async Task<ActionResult> LogOn(string username, string password)
 		{            
+            // Don't forget to do this check!
+            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            {
+                TempData[TempDataConstants.ERROR_MESSAGE] = "Invalid username or password";
+                return View("~/Views/Account/LogOn.cshtml");
+            }
+
             var invalidLoginkey = "InvalidLogin-" + username;
             
             // If username is blacklisted for some reason, reject
@@ -44,7 +51,9 @@ namespace HackerSpray.SampleWebSite.Controllers
 
             var user = DataStore.Users.Where(u => u.Username == username && u.Password == password).FirstOrDefault();
 
-			if (user != null)
+            var originIP = IPAddress.Parse(Request.Headers["OriginIP"] 
+                ?? Request.UserHostAddress).MapToIPv4();
+            if (user != null)
 			{
                 // Prevent DOS attack using valid username, password. 
                 // Maybe trying to generate many Session ID and guess
@@ -53,7 +62,7 @@ namespace HackerSpray.SampleWebSite.Controllers
 
                 var result = await HackerSprayer.Defend(
                     validLoginKey, 
-                    IPAddress.Parse(Request.UserHostAddress).MapToIPv4(), 
+                    originIP, 
                     MaxValidLoginInterval, 
                     MaxValidLogin);
 
@@ -74,7 +83,7 @@ namespace HackerSpray.SampleWebSite.Controllers
                 // Check for too many invalid login on a username    
                 var result = await HackerSprayer.Defend(
                     invalidLoginkey, 
-                    IPAddress.Parse(Request.UserHostAddress).MapToIPv4(), 
+                    originIP,
                     MaxInvalidLoginInterval,
                     MaxInvalidLogin);
 

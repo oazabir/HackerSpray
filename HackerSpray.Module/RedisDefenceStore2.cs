@@ -72,22 +72,22 @@ namespace HackerSpray.Module
             }
         }
 
-        async Task<int> IDefenceStore.GetHitsForKey(string key)
+        async Task<long> IDefenceStore.GetHitsForKey(string key)
         {
             var keyKey = prefix + "key-" + key;
             using (var client = await GetClient())
             {
-                return (await client.GetAsync(keyKey)).As<int>();
+                return (await client.GetAsync(keyKey)).As<long>();
             }
         }
 
-        async Task<int> IDefenceStore.GetHitsFromOrigin(IPAddress origin)
+        async Task<long> IDefenceStore.GetHitsFromOrigin(IPAddress origin)
         {
             var originValue = IP2Number(origin);
             var originkey = prefix + "origin-" + originValue;
             using (var client = await GetClient())
             {
-                return (await client.GetAsync(originkey)).As<int>();
+                return (await client.GetAsync(originkey)).As<long>();
             }
         }
 

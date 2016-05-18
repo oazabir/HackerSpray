@@ -59,14 +59,20 @@ namespace HackerSpray.Module
             return this.db.SortedSetAddAsync(this.prefix + BLACKLIST_ORIGIN_RANGE, originStart + "-" + originEnd, originStart);
         }
 
-        Task<int> IDefenceStore.GetHitsForKey(string key)
+        async Task<long> IDefenceStore.GetHitsForKey(string key)
         {
-            throw new NotImplementedException();
+            var keyKey = prefix + "key-" + key;
+            var result = await this.db.StringGetAsync(keyKey);
+            long count;
+            return result.IsInteger && result.TryParse(out count) ? count : 0;
         }
 
-        Task<int> IDefenceStore.GetHitsFromOrigin(IPAddress origin)
+        async Task<long> IDefenceStore.GetHitsFromOrigin(IPAddress origin)
         {
-            throw new NotImplementedException();
+            var originkey = prefix + "origin-" + IP2Number(origin);
+            var result = await this.db.StringGetAsync(originkey);
+            long count;
+            return result.IsInteger && result.TryParse(out count) ? count : 0;
         }
 
         Task<string[]> IDefenceStore.GetKeyBlacklists(string key)

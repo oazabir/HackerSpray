@@ -22,7 +22,7 @@ namespace HackerSpray.SampleWebSite
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             HackerSprayer.Store = new RedisDefenceStore(ConfigurationManager.AppSettings["RedisConnection"], ConfigurationManager.AppSettings["RedisPrefix"], HackerSprayer.Config);
-
+            HackerSprayModule.PathToDefend = ConfigurationManager.AppSettings["PathToDefend"] ?? "/";
         }
     }
 }

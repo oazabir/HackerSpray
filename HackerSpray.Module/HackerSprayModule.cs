@@ -9,6 +9,7 @@ namespace HackerSpray.Module
 {
     public class HackerSprayModule : IHttpModule
     {
+        public static string PathToDefend;
         /// <summary>
         /// You will need to configure this module in the Web.config file of your
         /// web and register it with IIS before being able to use it. For more information
@@ -32,9 +33,9 @@ namespace HackerSpray.Module
             var context = HttpContext.Current;
 
             // Block too many HTTP POST attempt on LogOn page
-            if (context.Request.HttpMethod == "POST" && context.Request.Path == "/Account/LogOn")
+            if (context.Request.HttpMethod == "POST" && context.Request.Path == PathToDefend)
             {
-                var ip = IPAddress.Parse(context.Request.UserHostAddress).MapToIPv4();
+                var ip = IPAddress.Parse(context.Request.Headers["OriginIP"] ?? context.Request.UserHostAddress).MapToIPv4();
                 var result = await HackerSprayer.Defend(context.Request.Path, ip);
 
                 // Blacklist origin. After that, it becomes least expensive to block requests
@@ -42,7 +43,8 @@ namespace HackerSpray.Module
                     || result == HackerSprayer.Result.TooManyHitsOnKeyFromOrigin)
                     await HackerSprayer.BlacklistOrigin(ip);
 
-                if (result != HackerSprayer.Result.Allowed)
+                if (result != HackerSprayer.Result.Allowed
+                    && result != HackerSprayer.Result.TooManyHitsOnKey)
                 {
                     context.Response.StatusCode = (int)HttpStatusCode.MethodNotAllowed;
                     context.Response.StatusDescription = Enum.GetName(typeof(HackerSprayer.Result), result);
