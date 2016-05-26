@@ -29,6 +29,7 @@ namespace UnitTest.TestUtilities
 
             request.Setup(r => r.AppRelativeCurrentExecutionFilePath).Returns("/");
             request.Setup(r => r.ApplicationPath).Returns("/");
+            request.Setup(r => r.Headers).Returns(new NameValueCollection());
 
             response.Setup(s => s.ApplyAppPathModifier(It.IsAny<string>())).Returns<string>(s => s);
             response.SetupProperty(res => res.StatusCode, (int)System.Net.HttpStatusCode.OK);

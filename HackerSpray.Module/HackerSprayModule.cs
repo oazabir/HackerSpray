@@ -10,6 +10,7 @@ namespace HackerSpray.Module
     public class HackerSprayModule : IHttpModule
     {
         public static string PathToDefend;
+        
         /// <summary>
         /// You will need to configure this module in the Web.config file of your
         /// web and register it with IIS before being able to use it. For more information
@@ -36,12 +37,12 @@ namespace HackerSpray.Module
             if (context.Request.HttpMethod == "POST" && context.Request.Path == PathToDefend)
             {
                 var ip = IPAddress.Parse(context.Request.Headers["OriginIP"] ?? context.Request.UserHostAddress).MapToIPv4();
-                var result = await HackerSprayer.Defend(context.Request.Path, ip);
+                var result = await HackerSprayer.DefendAsync(context.Request.Path, ip);
 
                 // Blacklist origin. After that, it becomes least expensive to block requests
                 if (result == HackerSprayer.Result.TooManyHitsFromOrigin
                     || result == HackerSprayer.Result.TooManyHitsOnKeyFromOrigin)
-                    await HackerSprayer.BlacklistOrigin(ip);
+                    await HackerSprayer.BlacklistOriginAsync(ip);
 
                 if (result != HackerSprayer.Result.Allowed
                     && result != HackerSprayer.Result.TooManyHitsOnKey)

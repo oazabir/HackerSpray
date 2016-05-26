@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace HackerSpray.Module
 {
-    public interface IDefenceStore
+    public interface IDefenceStore : IDisposable
     {
         Task<HitStats> IncrementHit(string key, IPAddress origin);
         Task<HitStats> IncrementHit(string key, IPAddress origin, TimeSpan keyInterval);
@@ -18,9 +18,13 @@ namespace HackerSpray.Module
         Task<string[]> GetKeyBlacklists(string key);
         Task<string[]> GetOriginBlacklists(IPAddress origin);
         Task<bool> WhitelistOrigin(IPAddress origin);
+        Task<bool> WhitelistOrigin(IPAddress start, IPAddress end);
         Task<bool> BlacklistOrigin(IPAddress origin, TimeSpan expiry);
         Task<bool> BlacklistOrigin(IPAddress start, IPAddress end);
         Task<bool> IsKeyBlacklisted(string key);
         Task<bool> IsOriginBlacklisted(IPAddress origin);
+
+        Task<bool> ClearBlacklists();
+        Task<bool> ClearAllHits();
     }
 }

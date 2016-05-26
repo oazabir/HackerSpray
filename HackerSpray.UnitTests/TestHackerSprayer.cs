@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using System.Linq;
 
 namespace HackerSpray.UnitTests
 {
@@ -26,6 +27,7 @@ namespace HackerSpray.UnitTests
     public class TestHackerSprayer
     {
         private static Random randomizer = new Random((int)DateTime.Now.Ticks);
+        
         [TestInitialize]
         public void Init()
         {
@@ -36,11 +38,20 @@ namespace HackerSpray.UnitTests
             HackerSprayer.Config.MaxHitsPerOriginInterval = TimeSpan.FromMinutes(1);
             HackerSprayer.Config.MaxHitsPerKeyPerOriginInterval = TimeSpan.FromMinutes(1);
 
-            //HackerSprayer.Store = new RedisDefenceStore("localhost", "HttpDefenceTest-", HackerSprayer.Config);            
-            HackerSprayer.Store = new RedisDefenceStore("10.187.146.206:7001,10.187.146.206:7002,10.187.146.206:7003,10.187.146.207:7001,10.187.146.207:7002,10.187.146.207:7003", "HttpDefenceTest-", HackerSprayer.Config);
+            HackerSprayer.Store = new RedisDefenceStore("localhost", "HttpDefenceTest-", HackerSprayer.Config);            
+            //HackerSprayer.Store = new RedisDefenceStore("10.187.146.206:7001,10.187.146.206:7002,10.187.146.206:7003,10.187.146.207:7001,10.187.146.207:7002,10.187.146.207:7003", "HttpDefenceTest-", HackerSprayer.Config);
             //HackerSprayer.Store = new RedisDefenceStore2("data source=127.0.0.1:6379", "HttpDefenceTest-", HackerSprayer.Config);
             //HackerSprayer.Store = new RedisDefenceStore2("data source=10.187.146.206:7001", "HttpDefenceTest-", HackerSprayer.Config);
         }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            HackerSprayer.ClearAllHitsAsync().Run();
+            HackerSprayer.ClearBlacklistsAsync().Run();
+            HackerSprayer.Store.Dispose();
+        }
+
 
         private IPAddress GetRandomIP()
         {
@@ -55,7 +66,7 @@ namespace HackerSpray.UnitTests
         [TestMethod]
         public void TestAllowed()
         {
-            var result = HackerSprayer.Defend("TestAllowed" + GetRandomKey(), GetRandomIP()).Run();
+            var result = HackerSprayer.DefendAsync("TestAllowed" + GetRandomKey(), GetRandomIP()).Run();
             Assert.AreEqual(HackerSprayer.Result.Allowed, result);
         }
 
@@ -74,17 +85,17 @@ namespace HackerSpray.UnitTests
             {
                 Assert.AreEqual(
                     HackerSprayer.Result.Allowed,
-                    HackerSprayer.Defend(fixedKey, GetRandomIP()).Run());
+                    HackerSprayer.DefendAsync(fixedKey, GetRandomIP()).Run());
             }
 
             Assert.AreEqual(
                 HackerSprayer.Result.TooManyHitsOnKey,
-                HackerSprayer.Defend(fixedKey, GetRandomIP()).Run());
+                HackerSprayer.DefendAsync(fixedKey, GetRandomIP()).Run());
 
             var ip = GetRandomIP();
             Assert.AreEqual(
                 HackerSprayer.Result.Allowed,
-                HackerSprayer.Defend(keyGenerator(), ip).Run(),
+                HackerSprayer.DefendAsync(keyGenerator(), ip).Run(),
                 "Allow traffic from aonther key on same IP");
 
             WaitForIntervalToElapse(HackerSprayer.Config.MaxHitsPerKeyInterval, startTime);
@@ -92,7 +103,7 @@ namespace HackerSpray.UnitTests
             // Hit from another IP using same key should be allowed
             Assert.AreEqual(
                 HackerSprayer.Result.Allowed,
-                HackerSprayer.Defend(fixedKey, GetRandomIP()).Run(),
+                HackerSprayer.DefendAsync(fixedKey, GetRandomIP()).Run(),
                 "After expiration time, key must be unblocked");
         }
 
@@ -112,7 +123,7 @@ namespace HackerSpray.UnitTests
                 {
                     Assert.AreEqual(
                     HackerSprayer.Result.Allowed,
-                    HackerSprayer.Defend(keyGenerator(), ip).Run()
+                    HackerSprayer.DefendAsync(keyGenerator(), ip).Run()
                     );
                 });
                     
@@ -120,20 +131,20 @@ namespace HackerSpray.UnitTests
             // No more requests from same IP
             Assert.AreEqual(
                     HackerSprayer.Result.TooManyHitsFromOrigin,
-                    HackerSprayer.Defend(keyGenerator(), ip).Run()
+                    HackerSprayer.DefendAsync(keyGenerator(), ip).Run()
                     );
 
             // Allow requests from other IPs
             Assert.AreEqual(
                 HackerSprayer.Result.Allowed,
-                HackerSprayer.Defend(keyGenerator(), GetRandomIP()).Run());
+                HackerSprayer.DefendAsync(keyGenerator(), GetRandomIP()).Run());
 
 
             WaitForIntervalToElapse(HackerSprayer.Config.MaxHitsPerOriginInterval, startTime);
 
             Assert.AreEqual(
                     HackerSprayer.Result.Allowed,
-                    HackerSprayer.Defend(keyGenerator(), ip).Run(),
+                    HackerSprayer.DefendAsync(keyGenerator(), ip).Run(),
                     "Allow hits from same origin after expiration time."
                     );
         }
@@ -155,30 +166,30 @@ namespace HackerSpray.UnitTests
                 {
                     Assert.AreEqual(
                         HackerSprayer.Result.Allowed,
-                        HackerSprayer.Defend(key, ip).Run(),
+                        HackerSprayer.DefendAsync(key, ip).Run(),
                         "Allow hits on same key and IP");
                 });
 
             // No more requests from same key and IP
             Assert.AreEqual(
                 HackerSprayer.Result.TooManyHitsOnKeyFromOrigin,
-                HackerSprayer.Defend(key, ip).Run());
+                HackerSprayer.DefendAsync(key, ip).Run());
 
             Assert.AreEqual(
                 HackerSprayer.Result.Allowed,
-                HackerSprayer.Defend(keyGenerator(), ip).Run(),
+                HackerSprayer.DefendAsync(keyGenerator(), ip).Run(),
                 "From different key, same IP, allow");
 
             Assert.AreEqual(
                 HackerSprayer.Result.Allowed,
-                HackerSprayer.Defend(key, GetRandomIP()).Run(),
+                HackerSprayer.DefendAsync(key, GetRandomIP()).Run(),
                 "From different IP, same key, allow");
 
             WaitForIntervalToElapse(HackerSprayer.Config.MaxHitsPerOriginInterval, startTime);
 
             Assert.AreEqual(
                         HackerSprayer.Result.Allowed,
-                        HackerSprayer.Defend(key, ip).Run(),
+                        HackerSprayer.DefendAsync(key, ip).Run(),
                         "Allow hits on same key and IP after expiration");
         }
 
@@ -190,26 +201,26 @@ namespace HackerSpray.UnitTests
 
             Assert.AreEqual(
                 HackerSprayer.Result.Allowed,
-                HackerSprayer.Defend(key, ip).Run(),
+                HackerSprayer.DefendAsync(key, ip).Run(),
                 string.Format("Allow traffic on {0} from {1}", key, ip));
 
-            HackerSprayer.BlacklistOrigin(ip).Run();
+            HackerSprayer.BlacklistOriginAsync(ip).Run();
 
             Assert.AreEqual(
                 HackerSprayer.Result.OriginBlocked,
-                HackerSprayer.Defend(key, ip).Run(),
+                HackerSprayer.DefendAsync(key, ip).Run(),
                 string.Format("Block traffic on {0} from {1}", key, ip));
 
             Assert.AreEqual(
                 HackerSprayer.Result.OriginBlocked,
-                HackerSprayer.Defend(GetRandomKey(), ip).Run(),
+                HackerSprayer.DefendAsync(GetRandomKey(), ip).Run(),
                 string.Format("Allow any traffic from {1}", key, ip));
 
-            HackerSprayer.WhitelistOrigin(ip).Run();
+            HackerSprayer.WhitelistOriginAsync(ip).Run();
 
             Assert.AreEqual(
                 HackerSprayer.Result.Allowed,
-                HackerSprayer.Defend(key, ip).Run(),
+                HackerSprayer.DefendAsync(key, ip).Run(),
                 string.Format("Allow traffic on {0} from {1} after whitelist", key, ip));
         }
 
@@ -221,26 +232,26 @@ namespace HackerSpray.UnitTests
 
             Assert.AreEqual(
                 HackerSprayer.Result.Allowed,
-                HackerSprayer.Defend(key, ip).Run(),
+                HackerSprayer.DefendAsync(key, ip).Run(),
                 string.Format("Allow traffic on {0} from {1}", key, ip));
 
-            HackerSprayer.BlacklistKey(key, TimeSpan.FromMinutes(5)).Run();
+            HackerSprayer.BlacklistKeyAsync(key, TimeSpan.FromMinutes(5)).Run();
 
             Assert.AreEqual(
                 HackerSprayer.Result.KeyBlocked,
-                HackerSprayer.Defend(key, ip).Run(),
+                HackerSprayer.DefendAsync(key, ip).Run(),
                 string.Format("Block traffic on {0} from {1}", key, ip));
 
             Assert.AreEqual(
                 HackerSprayer.Result.KeyBlocked,
-                HackerSprayer.Defend(key, GetRandomIP()).Run(),
+                HackerSprayer.DefendAsync(key, GetRandomIP()).Run(),
                 string.Format("Allow any traffic from {1}", key, ip));
 
-            HackerSprayer.WhitelistKey(key).Run();
+            HackerSprayer.WhitelistKeyAsync(key).Run();
 
             Assert.AreEqual(
                 HackerSprayer.Result.Allowed,
-                HackerSprayer.Defend(key, ip).Run(),
+                HackerSprayer.DefendAsync(key, ip).Run(),
                 string.Format("Allow traffic on {0} from {1} after whitelist", key, ip));
         }
 
@@ -262,25 +273,25 @@ namespace HackerSpray.UnitTests
                 {
                     Assert.AreEqual(
                     HackerSprayer.Result.Allowed,
-                    HackerSprayer.Defend(key, ip, interval, maxHits).Run(),
+                    HackerSprayer.DefendAsync(key, ip, interval, maxHits).Run(),
                     "Allow hits on key for custom interval");
                 });
 
             Assert.AreEqual(
                     HackerSprayer.Result.TooManyHitsOnKey,
-                    HackerSprayer.Defend(key, ip, interval, maxHits).Run(),
+                    HackerSprayer.DefendAsync(key, ip, interval, maxHits).Run(),
                     "Must not allow hits on key after custom interval");
 
             Assert.AreEqual(
                     HackerSprayer.Result.Allowed,
-                    HackerSprayer.Defend("InvalidLogin-" + GetRandomKey(), ip, interval, maxHits).Run(),
+                    HackerSprayer.DefendAsync("InvalidLogin-" + GetRandomKey(), ip, interval, maxHits).Run(),
                     "Allow hits on different key from same IP");
 
             WaitForIntervalToElapse(interval, startTime);
 
             Assert.AreEqual(
                     HackerSprayer.Result.Allowed,
-                    HackerSprayer.Defend(key, ip, interval, maxHits).Run(),
+                    HackerSprayer.DefendAsync(key, ip, interval, maxHits).Run(),
                     "Allow hits on key for after interval has passed.");
         }
 
@@ -294,22 +305,22 @@ namespace HackerSpray.UnitTests
 
             Assert.AreEqual(
                     false,
-                    HackerSprayer.IsKeyBlacklisted(key).Run(),
+                    HackerSprayer.IsKeyBlacklistedAsync(key).Run(),
                     "Key must not be blacklisted");
 
             var startTime = DateTime.Now;
-            HackerSprayer.BlacklistKey(key, interval).Run();
+            HackerSprayer.BlacklistKeyAsync(key, interval).Run();
 
             Assert.AreEqual(
                     true,
-                    HackerSprayer.IsKeyBlacklisted(key).Run(),
+                    HackerSprayer.IsKeyBlacklistedAsync(key).Run(),
                     "Key must be blacklisted");
 
             WaitForIntervalToElapse(interval, startTime);
 
             Assert.AreEqual(
                     false,
-                    HackerSprayer.IsKeyBlacklisted(key).Run(),
+                    HackerSprayer.IsKeyBlacklistedAsync(key).Run(),
                     "Key must not be blacklisted after expiration time");
         }
 
@@ -329,23 +340,103 @@ namespace HackerSpray.UnitTests
 
             Assert.AreEqual(
                     false,
-                    HackerSprayer.isOriginBlacklisted(ip).Run(),
+                    HackerSprayer.isOriginBlacklistedAsync(ip).Run(),
                     "Origin must not be blacklisted");
 
             var startTime = DateTime.Now;
-            HackerSprayer.BlacklistOrigin(ip, interval).Run();
+            HackerSprayer.BlacklistOriginAsync(ip, interval).Run();
 
             Assert.AreEqual(
                     true,
-                    HackerSprayer.isOriginBlacklisted(ip).Run(),
+                    HackerSprayer.isOriginBlacklistedAsync(ip).Run(),
                     "Origin must be blacklisted");
 
             WaitForIntervalToElapse(interval, startTime);
 
             Assert.AreEqual(
                     false,
-                    HackerSprayer.isOriginBlacklisted(ip).Run(),
+                    HackerSprayer.isOriginBlacklistedAsync(ip).Run(),
                     "Origin must not be blacklisted after expiration time");
+        }
+
+
+        [TestMethod]
+        public void TestOriginRangeBlocking()
+        {
+            HackerSprayer.ClearBlacklistsAsync().Run();
+            HackerSprayer.ClearAllHitsAsync().Run();
+
+            var ipsInRange = new[] {
+                IPAddress.Parse("10.10.10.10"),
+                IPAddress.Parse("10.10.10.11"),
+                IPAddress.Parse("10.10.254.254"),
+                IPAddress.Parse("10.11.10.9"),
+                IPAddress.Parse("10.11.10.10"),
+                IPAddress.Parse("9.1.1.1"),
+                IPAddress.Parse("9.1.1.10"),
+                IPAddress.Parse("9.10.10.9"),
+                IPAddress.Parse("10.11.10.12"),
+                IPAddress.Parse("127.254.254.254"),
+                IPAddress.Parse("100.100.100.100"),
+                IPAddress.Parse("128.10.10.12"),
+                IPAddress.Parse("128.10.10.254"),
+                IPAddress.Parse("128.10.10.128"),
+                };
+
+            var ipsOutofRange = new[] {
+                IPAddress.Parse("10.10.10.9"),
+                IPAddress.Parse("9.10.10.10"),
+                IPAddress.Parse("10.11.10.11"),
+                IPAddress.Parse("128.10.10.11"),
+                IPAddress.Parse("200.200.200.200"),
+                IPAddress.Parse("1.1.1.1"),
+                IPAddress.Parse("10.0.0.0")
+                };
+
+            HackerSprayer.BlacklistOriginAsync(IPAddress.Parse("10.10.10.10"), IPAddress.Parse("10.11.10.10")).Run();
+            HackerSprayer.BlacklistOriginAsync(IPAddress.Parse("9.1.1.1"), IPAddress.Parse("9.10.10.9")).Run();
+            HackerSprayer.BlacklistOriginAsync(IPAddress.Parse("10.11.10.12"), IPAddress.Parse("127.254.254.254")).Run();
+            HackerSprayer.BlacklistOriginAsync(IPAddress.Parse("128.10.10.12"), IPAddress.Parse("128.10.10.254")).Run();
+
+            Array.ForEach(ipsInRange, ip => 
+                Assert.AreEqual(HackerSprayer.Result.OriginBlocked,
+                    HackerSprayer.DefendAsync("TestOriginRangeBlocking", ip).Run(),
+                    ip.ToString() + " must be blocked."));
+
+            HackerSprayer.ClearAllHitsAsync().Run();
+
+            Array.ForEach(ipsOutofRange, ip => 
+                Assert.AreEqual(HackerSprayer.Result.Allowed,
+                    HackerSprayer.DefendAsync("TestOriginRangeBlocking", ip).Run(),
+                    ip.ToString() + " must be allowed"));
+
+            HackerSprayer.WhitelistOriginAsync(IPAddress.Parse("9.1.1.1"), IPAddress.Parse("9.10.10.9")).Run();
+
+            Array.ForEach(new[]
+                {
+                    IPAddress.Parse("9.1.1.1"),
+                    IPAddress.Parse("9.1.1.10"),
+                    IPAddress.Parse("9.10.10.9")
+                }, 
+                ip => 
+                    Assert.AreEqual(HackerSprayer.Result.Allowed,
+                        HackerSprayer.DefendAsync("TestOriginRangeBlocking", ip).Run(),
+                        ip.ToString() + " must be allowed"));
+
+            HackerSprayer.ClearBlacklistsAsync().Run();
+            HackerSprayer.ClearAllHitsAsync().Run();
+
+            Array.ForEach(ipsInRange, ip => 
+                Assert.AreEqual(HackerSprayer.Result.Allowed,
+                    HackerSprayer.DefendAsync("TestOriginRangeBlocking", ip).Run(),
+                    ip.ToString() + " must be allowed when there's no blacklisting."));
+
+            HackerSprayer.ClearAllHitsAsync().Run();
+
+            Array.ForEach(ipsOutofRange, ip => 
+                Assert.AreEqual(HackerSprayer.Result.Allowed,
+                    HackerSprayer.DefendAsync("TestOriginRangeBlocking", ip).Run(),
+                    ip.ToString() + " must be allowed when there's no blacklisting"));
         }
     }
 }

@@ -30,7 +30,7 @@ namespace HackerSpray.Module
             TooManyHitsOnKey,
             TooManyHitsOnKeyFromOrigin
         }
-        public static async Task<Result> Defend(string key, IPAddress origin)
+        public static async Task<Result> DefendAsync(string key, IPAddress origin)
         {
             if (await Store.IsOriginBlacklisted(origin))
                 return Result.OriginBlocked;
@@ -52,7 +52,7 @@ namespace HackerSpray.Module
             return Result.Allowed;
         }
 
-        public static async Task<Result> Defend(string key, IPAddress origin, TimeSpan interval, long maxHit)
+        public static async Task<Result> DefendAsync(string key, IPAddress origin, TimeSpan interval, long maxHit)
         {
             if (await Store.IsOriginBlacklisted(origin))
                 return Result.OriginBlocked;
@@ -74,39 +74,59 @@ namespace HackerSpray.Module
             return Result.Allowed;
         }
 
-        public static Task<bool> BlacklistKey(string key, TimeSpan expiration)
+        public static Task<bool> BlacklistKeyAsync(string key, TimeSpan expiration)
         {
             return Store.BlacklistKey(key, expiration);
         }
 
-        public static Task<bool> WhitelistKey(string key)
+        public static Task<bool> WhitelistKeyAsync(string key)
         {
             return Store.WhitelistKey(key);
         }
 
-        public static Task<bool> BlacklistOrigin(IPAddress origin, TimeSpan expiration)
+        public static Task<bool> BlacklistOriginAsync(IPAddress origin, TimeSpan expiration)
         {
             return Store.BlacklistOrigin(origin, expiration);
         }
 
-        public static Task<bool> BlacklistOrigin(IPAddress origin)
+        public static Task<bool> BlacklistOriginAsync(IPAddress origin)
         {
-            return BlacklistOrigin(origin, Config.OriginBlacklistInterval);
+            return BlacklistOriginAsync(origin, Config.OriginBlacklistInterval);
         }
 
-        public static Task<bool> WhitelistOrigin(IPAddress origin)
+        public static Task<bool> BlacklistOriginAsync(IPAddress start, IPAddress end)
+        {
+            return Store.BlacklistOrigin(start, end);
+        }
+
+        public static Task<bool> WhitelistOriginAsync(IPAddress origin)
         {
             return Store.WhitelistOrigin(origin);
         }
 
-        public static Task<bool> IsKeyBlacklisted(string key)
+        public static Task<bool> WhitelistOriginAsync(IPAddress start, IPAddress end)
+        {
+            return Store.WhitelistOrigin(start, end);
+        }
+
+        public static Task<bool> IsKeyBlacklistedAsync(string key)
         {
             return Store.IsKeyBlacklisted(key);
         }
 
-        public static Task<bool> isOriginBlacklisted(IPAddress origin)
+        public static Task<bool> isOriginBlacklistedAsync(IPAddress origin)
         {
             return Store.IsOriginBlacklisted(origin);
+        }
+
+        public static Task<bool> ClearBlacklistsAsync()
+        {
+            return Store.ClearBlacklists();
+        }
+
+        public static Task<bool> ClearAllHitsAsync()
+        {
+            return Store.ClearAllHits();
         }
     }
 }

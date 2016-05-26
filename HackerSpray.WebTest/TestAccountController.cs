@@ -9,6 +9,7 @@ using HackerSpray.Module;
 using UnitTest.TestUtilities;
 using Moq;
 using HackerSpray.SampleWebSite.Constants;
+using System.Configuration;
 
 namespace HackerSpray.WebTest
 {
@@ -25,6 +26,7 @@ namespace HackerSpray.WebTest
             HackerSprayer.Config.MaxHitsPerOriginInterval = TimeSpan.FromMinutes(1);
             HackerSprayer.Config.MaxHitsPerKeyPerOriginInterval = TimeSpan.FromMinutes(1);
 
+            ConfigurationManager.AppSettings["HackerSprayEnabled"] = "true";
             //HackerSprayer.Store = new RedisDefenceStore("localhost", "HttpDefenceTest-", HackerSprayer.Config);
             HackerSprayer.Store = new RedisDefenceStore("10.187.146.206:7001,10.187.146.206:7002,10.187.146.206:7003,10.187.146.207:7001,10.187.146.207:7002,10.187.146.207:7003", "HttpDefenceTest-", HackerSprayer.Config);
             //HackerSprayer.Store = new RedisDefenceStore2("data source=127.0.0.1:6379", "HttpDefenceTest-", HackerSprayer.Config);
@@ -77,7 +79,6 @@ namespace HackerSpray.WebTest
             var invalidResult = controller.LogOn("user2", "user2").Run();
             AssertBlockedLogin(invalidResult, "Block login attempt after max login attempt");
 
-
             // wait for expiration time
             WaitForExpirationTime(AccountController.MaxValidLoginInterval, startTime);
 
@@ -111,7 +112,6 @@ namespace HackerSpray.WebTest
             var invalidResult = controller.LogOn("user2", "invalidpassword").Run();
             AssertBlockedLogin(invalidResult, "Block login attempt after max login attempt");
 
-            
             WaitForExpirationTime(AccountController.MaxInvalidLoginInterval, startTime);
 
             var result = controller.LogOn("user2", "invalidpassword").Run();
