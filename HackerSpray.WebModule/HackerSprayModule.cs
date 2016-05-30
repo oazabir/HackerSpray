@@ -6,7 +6,7 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace HackerSpray.Web
+namespace HackerSpray.WebModule
 {
     public class HackerSprayModule : IHttpModule
     {

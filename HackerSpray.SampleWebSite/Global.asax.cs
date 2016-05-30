@@ -1,5 +1,5 @@
 ﻿using HackerSpray.Module;
-using HackerSpray.Web;
+using HackerSpray.WebModule;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
