@@ -15,7 +15,7 @@ namespace HackerSpray.Module
         Task<long> GetHitsFromOrigin(IPAddress origin);
         Task<bool> WhitelistKey(string key);
         Task<bool> BlacklistKey(string key, TimeSpan expiry);
-        Task<string[]> GetKeyBlacklists(string key);
+        Task<string[]> GetKeyBlacklists();
         Task<string[]> GetOriginBlacklists(IPAddress origin);
         Task<bool> WhitelistOrigin(IPAddress origin);
         Task<bool> WhitelistOrigin(IPAddress start, IPAddress end);

@@ -79,20 +79,21 @@ namespace HackerSpray.Module
             var keyKey = prefix + "key:" + key;
             var result = await this.db.StringGetAsync(keyKey);
             long count;
-            return result.IsInteger && result.TryParse(out count) ? count : 0;
+            return result.TryParse(out count) ? count : 0;
         }
 
         async Task<long> IDefenceStore.GetHitsFromOrigin(IPAddress origin)
         {
-            var originkey = prefix + "origin:" + IP2Number(origin);
+            var originkey = prefix + "origin:" + origin.ToString();
             var result = await this.db.StringGetAsync(originkey);
             long count;
-            return result.IsInteger && result.TryParse(out count) ? count : 0;
+            return result.TryParse(out count) ? count : 0;
         }
 
-        Task<string[]> IDefenceStore.GetKeyBlacklists(string key)
+        async Task<string[]> IDefenceStore.GetKeyBlacklists()
         {
-            throw new NotImplementedException();
+            RedisValue[] values = await this.db.SetMembersAsync(this.prefix + BLACKLIST_KEY_SET);
+            return Array.ConvertAll<RedisValue, string>(values, v => v.ToString());
         }
 
         async Task<string[]> IDefenceStore.GetOriginBlacklists(IPAddress origin)

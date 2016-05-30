@@ -40,8 +40,6 @@ namespace HackerSpray.UnitTests
 
             HackerSprayer.Store = new RedisDefenceStore("localhost", "HttpDefenceTest-", HackerSprayer.Config);            
             //HackerSprayer.Store = new RedisDefenceStore("10.187.146.206:7001,10.187.146.206:7002,10.187.146.206:7003,10.187.146.207:7001,10.187.146.207:7002,10.187.146.207:7003", "HttpDefenceTest-", HackerSprayer.Config);
-            //HackerSprayer.Store = new RedisDefenceStore2("data source=127.0.0.1:6379", "HttpDefenceTest-", HackerSprayer.Config);
-            //HackerSprayer.Store = new RedisDefenceStore2("data source=10.187.146.206:7001", "HttpDefenceTest-", HackerSprayer.Config);
         }
 
         [TestCleanup]
@@ -81,13 +79,21 @@ namespace HackerSpray.UnitTests
             var fixedKey = keyGenerator();
 
             var startTime = DateTime.Now;
-            for (int i = 0; i < HackerSprayer.Config.MaxHitsPerKey; i++)
-            {
-                Assert.AreEqual(
-                    HackerSprayer.Result.Allowed,
-                    HackerSprayer.DefendAsync(fixedKey, GetRandomIP()).Run());
-            }
 
+            Parallel.For(0, HackerSprayer.Config.MaxHitsPerKey,
+                hit =>
+                {
+                    Assert.AreEqual(
+                    HackerSprayer.Result.Allowed,
+                    HackerSprayer.DefendAsync(fixedKey, GetRandomIP()).Run()
+                    );
+                });
+
+            Assert.AreEqual(
+                HackerSprayer.Config.MaxHitsPerKey,
+                HackerSprayer.GetHitsForKey(fixedKey).Run(),
+                "Number of hits recorded must match");
+            
             Assert.AreEqual(
                 HackerSprayer.Result.TooManyHitsOnKey,
                 HackerSprayer.DefendAsync(fixedKey, GetRandomIP()).Run());
@@ -118,7 +124,7 @@ namespace HackerSpray.UnitTests
             Func<string> keyGenerator = () => { return "TestMaxHitsPerOrigin" + GetRandomKey(); };
 
             var startTime = DateTime.Now;
-            Parallel.For(0, HackerSprayer.Config.MaxHitsPerOrigin,
+            var result = Parallel.For(0, HackerSprayer.Config.MaxHitsPerOrigin,
                 hit =>
                 {
                     Assert.AreEqual(
@@ -126,7 +132,15 @@ namespace HackerSpray.UnitTests
                     HackerSprayer.DefendAsync(keyGenerator(), ip).Run()
                     );
                 });
-                    
+
+            while (!result.IsCompleted)
+                Thread.Sleep(100);
+
+            Assert.AreEqual(
+                HackerSprayer.Config.MaxHitsPerOrigin,
+                HackerSprayer.GetHitsFromOrigin(ip).Run(),
+                "Number of hits recorded must match");
+
 
             // No more requests from same IP
             Assert.AreEqual(
@@ -169,6 +183,11 @@ namespace HackerSpray.UnitTests
                         HackerSprayer.DefendAsync(key, ip).Run(),
                         "Allow hits on same key and IP");
                 });
+            
+            Assert.AreEqual(
+                HackerSprayer.Config.MaxHitsPerKeyPerOrigin,
+                HackerSprayer.GetHitsForKey(key).Run(),
+                "Number of hits recorded must match");
 
             // No more requests from same key and IP
             Assert.AreEqual(
@@ -315,6 +334,10 @@ namespace HackerSpray.UnitTests
                     true,
                     HackerSprayer.IsKeyBlacklistedAsync(key).Run(),
                     "Key must be blacklisted");
+
+            string [] blacklistedKeys = HackerSprayer.GetKeyBlacklists().Run();
+            Assert.IsTrue(Array.Exists(blacklistedKeys, k => k == key),
+                "Key must be in the blacklist");
 
             WaitForIntervalToElapse(interval, startTime);
 

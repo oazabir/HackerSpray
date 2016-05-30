@@ -7,10 +7,10 @@ using System.Web.Routing;
 using System.Web.Security;
 using HackerSpray.SampleWebSite.Models;
 using HackerSpray.SampleWebSite.Constants;
-using HackerSpray.Module;
 using System.Net;
 using System.Threading.Tasks;
 using System.Configuration;
+using HackerSpray.Module;
 
 namespace HackerSpray.SampleWebSite.Controllers
 {

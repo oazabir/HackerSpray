@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("HttpDefence.Module")]
-[assembly: AssemblyDescription("Defend against brute force attacks on ASP.NET websites")]
+[assembly: AssemblyTitle("HackerSpray.WebModule")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("HttpDefence.Module")]
-[assembly: AssemblyCopyright("Copyright ©  Omar AL Zabir 2016")]
+[assembly: AssemblyProduct("HackerSpray.WebModule")]
+[assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("1e92fa1f-dfd0-4d5e-b5d6-ad6acd5867b2")]
+[assembly: Guid("af6a9824-6ba2-46e9-b451-a1076501bf54")]
 
 // Version information for an assembly consists of the following four values:
 //

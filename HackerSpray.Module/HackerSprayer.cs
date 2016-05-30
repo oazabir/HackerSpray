@@ -128,5 +128,20 @@ namespace HackerSpray.Module
         {
             return Store.ClearAllHits();
         }
+
+        public static Task<long> GetHitsForKey(string key)
+        {
+            return Store.GetHitsForKey(key);
+        }
+
+        public static Task<long> GetHitsFromOrigin(IPAddress origin)
+        {
+            return Store.GetHitsFromOrigin(origin);
+        }
+
+        public static Task<string[]> GetKeyBlacklists()
+        {
+            return Store.GetKeyBlacklists();
+        }
     }
 }

@@ -1,11 +1,12 @@
-﻿using HackerSpray.Module;
+﻿
+using HackerSpray.Module;
 using System;
 using System.Configuration;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace HackerSpray.Module
+namespace HackerSpray.Web
 {
     public class HackerSprayModule : IHttpModule
     {
@@ -16,7 +17,7 @@ namespace HackerSpray.Module
         /// web and register it with IIS before being able to use it. For more information
         /// see the following link: http://go.microsoft.com/?linkid=8101007
         /// </summary>
-        #region IHttpModule Members
+#region IHttpModule Members
 
         public void Dispose()
         {
@@ -55,6 +56,6 @@ namespace HackerSpray.Module
             
         }
 
-        #endregion
+#endregion
     }
 }

@@ -189,13 +189,19 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="packages.config" />
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HackerSpray.Module\HackerSpray.Module.csproj">
       <Project>{1e92fa1f-dfd0-4d5e-b5d6-ad6acd5867b2}</Project>
       <Name>HackerSpray.Module</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\HackerSpray.WebModule\HackerSpray.WebModule.csproj">
+      <Project>{af6a9824-6ba2-46e9-b451-a1076501bf54}</Project>
+      <Name>HackerSpray.WebModule</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
