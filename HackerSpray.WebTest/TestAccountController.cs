@@ -10,6 +10,7 @@ using UnitTest.TestUtilities;
 using Moq;
 using HackerSpray.SampleWebSite.Constants;
 using System.Configuration;
+using HackerSpray.SampleWebSite.Models;
 
 namespace HackerSpray.WebTest
 {
@@ -49,6 +50,7 @@ namespace HackerSpray.WebTest
 
             var result = controller.LogOn("user1", "user1").Run();
             AssertLoginSuccess(result, "Valid login failed");
+            //Assert.IsInstanceOfType(controller.Session[SessionConstants.USER], typeof(User));
         }
 
         private static void AssertLoginSuccess(ActionResult result, string message = "")

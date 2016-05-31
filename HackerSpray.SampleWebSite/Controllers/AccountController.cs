@@ -36,7 +36,15 @@ namespace HackerSpray.SampleWebSite.Controllers
 
 		[HttpPost]
 		public async Task<ActionResult> LogOn(string username, string password)
-		{            
+		{
+            // This handles load balancers passing the original client IP
+            // through this header. 
+            // WARNING: If you load balancer is not passing original client IP
+            // through this header, then you will be blocking your load balancer,
+            // causing a total outage. Also ensure this Header cannot be spoofed.
+            var originIP = IPAddress.Parse(Request.Headers["X-Forward-For"]
+               ?? Request.UserHostAddress).MapToIPv4();
+
             // Don't forget to do this check!
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
             {
@@ -44,70 +52,32 @@ namespace HackerSpray.SampleWebSite.Controllers
                 return View("~/Views/Account/LogOn.cshtml");
             }
 
-            var invalidLoginkey = "InvalidLogin:" + username;
+            User user = default(User);
+            return await HackerSprayer.Defend<ActionResult>(
+                    work =>
+                    {
+                        user = DataStore.Users.Where(u => u.Username == username && u.Password == password).FirstOrDefault();
+                        return Task.FromResult<bool>(user != null);
+                    },
+                    success => {
+                        Session[SessionConstants.USER] = user;
+                        return RedirectToAction("Index", "Home");
+                    },
+                    failed =>
+                    {
+                        TempData[TempDataConstants.ERROR_MESSAGE] = "Invalid username or password";
+                        return View("~/Views/Account/LogOn.cshtml");
+                    },
+                    blocked => new HttpStatusCodeResult(HttpStatusCode.Forbidden),
+                    "ValidLogin:" + username,
+                    MaxValidLogin,
+                    MaxValidLoginInterval,
+                    "InvalidLogin:" + username,
+                    MaxInvalidLogin,
+                    MaxInvalidLoginInterval,
+                    originIP
+                );            
             
-            // If username is blacklisted for some reason, reject
-            if (HackerSprayEnabled)
-            {
-                if (await HackerSprayer.IsKeyBlacklistedAsync(invalidLoginkey))
-                {
-                    return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
-                }
-            }
-
-            var user = DataStore.Users.Where(u => u.Username == username && u.Password == password).FirstOrDefault();
-
-            var originIP = IPAddress.Parse(Request.Headers["OriginIP"] 
-                ?? Request.UserHostAddress).MapToIPv4();
-            if (user != null)
-			{
-                if (HackerSprayEnabled)
-                {
-                    // Prevent DOS attack using valid username, password. 
-                    // Maybe trying to generate many Session ID and guess
-                    // how it is generated.
-                    var validLoginKey = "ValidLogin:" + username;
-
-                    var result = await HackerSprayer.DefendAsync(
-                        validLoginKey,
-                        originIP,
-                        MaxValidLoginInterval,
-                        MaxValidLogin);
-
-                    if (result == HackerSprayer.Result.TooManyHitsOnKey)
-                    {
-                        // Too many valid login on same username. 
-                        await HackerSprayer.BlacklistKeyAsync(validLoginKey, MaxValidLoginInterval);
-                        return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
-                    }
-                }
-
-                // All Good
-                Session[SessionConstants.USER] = user;
-                return RedirectToAction("Index", "Home");
-                
-			}
-			else
-			{
-                if (HackerSprayEnabled)
-                {
-                    // Check for too many invalid login on a username    
-                    var result = await HackerSprayer.DefendAsync(
-                        invalidLoginkey,
-                        originIP,
-                        MaxInvalidLoginInterval,
-                        MaxInvalidLogin);
-
-                    if (result == HackerSprayer.Result.TooManyHitsOnKey)
-                    {
-                        await HackerSprayer.BlacklistKeyAsync(invalidLoginkey, MaxInvalidLoginInterval);
-                        return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
-                    }
-                }
-
-				TempData[TempDataConstants.ERROR_MESSAGE] = "Invalid username or password";
-				return View("~/Views/Account/LogOn.cshtml");
-            }
 		}
 
 		//

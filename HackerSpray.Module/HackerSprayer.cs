@@ -143,5 +143,64 @@ namespace HackerSpray.Module
         {
             return Store.GetKeyBlacklists();
         }
+
+
+        public static async Task<TResult> Defend<TResult>(            
+            Func<object, Task<bool>> work, 
+            Func<object, TResult> success, 
+            Func<object, TResult> failed,
+            Func<object, TResult> blocked,
+            string validActionKey,
+            long maxValidAttempt,
+            TimeSpan validAttemptInterval,
+            string invalidActionKey,
+            long maxInvalidAttempt,
+            TimeSpan invalidAttemptInterval,
+            IPAddress origin)
+        {
+            var state = new object();
+            if (await HackerSprayer.IsKeyBlacklistedAsync(invalidActionKey))
+            {
+                return blocked(state);
+            }
+
+            var status = await work(state);
+            if (status)
+            {
+
+                var result = await HackerSprayer.DefendAsync(
+                    validActionKey,
+                    origin,
+                    validAttemptInterval,
+                    maxValidAttempt);
+
+                if (result == HackerSprayer.Result.TooManyHitsOnKey)
+                {
+                    // Too many valid login on same username. 
+                    await HackerSprayer.BlacklistKeyAsync(validActionKey, validAttemptInterval);
+                    return blocked(state);
+                }
+                
+                return success(state);
+
+            }
+            else
+            {
+                // Check for too many invalid login on a username    
+                var result = await HackerSprayer.DefendAsync(
+                    invalidActionKey,
+                    origin,
+                    invalidAttemptInterval,
+                    maxInvalidAttempt);
+
+                if (result == HackerSprayer.Result.TooManyHitsOnKey)
+                {
+                    await HackerSprayer.BlacklistKeyAsync(invalidActionKey, invalidAttemptInterval);
+                    return blocked(state);
+                }
+
+                return failed(state);
+            }
+        }
     }
 }

@@ -1,0 +1,11 @@
+{
+  "AppSettings": {
+    "SiteTitle": "HackerSpray.SampleDotNetCoreWebsite"
+  },
+  "Data": {
+    "DefaultConnection": {
+      //"ConnectionString": "Server=(localdb)\\mssqllocaldb;Database=aspnet5-HackerSpray.SampleDotNetCoreWebsite-f6a67b61-ff0f-4456-9e9e-edc29843b443;Trusted_Connection=True;MultipleActiveResultSets=true"
+      "ConnectionString": "Server=.\\sqlexpress12;Database=aspnet5-HackerSpray.SampleDotNetCoreWebsite-f6a67b61-ff0f-4456-9e9e-edc29843b443;Trusted_Connection=True;MultipleActiveResultSets=true"
+    }
+  }
+}
