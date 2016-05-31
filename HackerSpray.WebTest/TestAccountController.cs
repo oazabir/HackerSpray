@@ -49,8 +49,7 @@ namespace HackerSpray.WebTest
             var controller = GetAccountController();
 
             var result = controller.LogOn("user1", "user1").Run();
-            AssertLoginSuccess(result, "Valid login failed");
-            //Assert.IsInstanceOfType(controller.Session[SessionConstants.USER], typeof(User));
+            AssertLoginSuccess(result, "Valid login failed");            
         }
 
         private static void AssertLoginSuccess(ActionResult result, string message = "")

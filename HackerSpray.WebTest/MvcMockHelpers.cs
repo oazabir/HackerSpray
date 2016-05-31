@@ -1,5 +1,6 @@
 ﻿using Moq;
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Web;
 using System.Web.Mvc;
@@ -25,6 +26,7 @@ namespace UnitTest.TestUtilities
             var request = new Mock<HttpRequestBase>();
             var response = new Mock<HttpResponseBase>();
             var session = new Mock<HttpSessionStateBase>();
+            
             var server = new Mock<HttpServerUtilityBase>();
 
             request.Setup(r => r.AppRelativeCurrentExecutionFilePath).Returns("/");
@@ -40,6 +42,7 @@ namespace UnitTest.TestUtilities
             context.Setup(ctx => ctx.Request).Returns(request.Object);
             context.Setup(ctx => ctx.Response).Returns(response.Object);
             context.Setup(ctx => ctx.Session).Returns(session.Object);
+            
             context.Setup(ctx => ctx.Server).Returns(server.Object);
 
             return context.Object;
@@ -155,4 +158,6 @@ namespace UnitTest.TestUtilities
 
         #endregion
     }
+
+    
 }

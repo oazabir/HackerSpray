@@ -54,19 +54,19 @@ namespace HackerSpray.SampleWebSite.Controllers
 
             User user = default(User);
             return await HackerSprayer.Defend<ActionResult>(
-                    work =>
+                    async (success, fail) =>
                     {
                         user = DataStore.Users.Where(u => u.Username == username && u.Password == password).FirstOrDefault();
-                        return Task.FromResult<bool>(user != null);
-                    },
-                    success => {
-                        Session[SessionConstants.USER] = user;
-                        return RedirectToAction("Index", "Home");
-                    },
-                    failed =>
-                    {
-                        TempData[TempDataConstants.ERROR_MESSAGE] = "Invalid username or password";
-                        return View("~/Views/Account/LogOn.cshtml");
+                        if (user!= null)
+                        {
+                            Session[SessionConstants.USER] = user;
+                            return await success(RedirectToAction("Index", "Home"));
+                        }
+                        else
+                        {
+                            TempData[TempDataConstants.ERROR_MESSAGE] = "Invalid username or password";
+                            return await fail(View("~/Views/Account/LogOn.cshtml"));
+                        }
                     },
                     blocked => new HttpStatusCodeResult(HttpStatusCode.Forbidden),
                     "ValidLogin:" + username,

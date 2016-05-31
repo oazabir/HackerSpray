@@ -14,12 +14,20 @@ using HackerSpray.SampleDotNetCoreWebsite;
 using HackerSpray.SampleDotNetCoreWebsite.Models;
 using HackerSpray.SampleDotNetCoreWebsite.Services;
 using HackerSpray.SampleDotNetCoreWebsite.Migrations;
+using HackerSpray.Module;
+using System.Net;
 
 namespace HackerSpray.SampleDotNetCoreWebsite.Controllers
 {
     [Authorize]
     public class AccountController : Controller
     {
+        public static int MaxValidLogin = 10;
+        public static TimeSpan MaxValidLoginInterval = TimeSpan.FromMinutes(10);
+
+        public static int MaxInvalidLogin = 3;
+        public static TimeSpan MaxInvalidLoginInterval = TimeSpan.FromMinutes(15);
+        
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
@@ -58,34 +66,56 @@ namespace HackerSpray.SampleDotNetCoreWebsite.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
         {
-            EnsureDatabaseCreated(_applicationDbContext);
-            ViewData["ReturnUrl"] = returnUrl;
-            if (ModelState.IsValid)
-            {
-                // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
-                if (result.Succeeded)
-                {
-                    return RedirectToLocal(returnUrl);
-                }
-                if (result.RequiresTwoFactor)
-                {
-                    return RedirectToAction(nameof(SendCode), new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
-                }
-                if (result.IsLockedOut)
-                {
-                    return View("Lockout");
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                    return View(model);
-                }
-            }
+            SignInResult result = default(SignInResult);
+            // This handles load balancers passing the original client IP
+            // through this header. 
+            // WARNING: If you load balancer is not passing original client IP
+            // through this header, then you will be blocking your load balancer,
+            // causing a total outage. Also ensure this Header cannot be spoofed.
+            var originIP = Request.Headers["X-Forward-For"] == null ? Context.Connection.RemoteIpAddress.MapToIPv4()
+                : IPAddress.Parse(Request.Headers["X-Forward-For"]).MapToIPv4();
 
-            // If we got this far, something failed, redisplay form
-            return View(model);
+            return await HackerSprayer.Defend<IActionResult>(async (success, fail) =>
+                {
+                    ViewData["ReturnUrl"] = returnUrl;
+                    if (ModelState.IsValid)
+                    {
+                        // This doesn't count login failures towards account lockout
+                        // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+                        result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+                        if (result.Succeeded)
+                        {
+                            return await success(RedirectToLocal(returnUrl));
+                        }
+                        if (result.RequiresTwoFactor)
+                        {
+                            return await success(RedirectToAction(nameof(SendCode), new { ReturnUrl = returnUrl, RememberMe = model.RememberMe }));
+                        }
+                        if (result.IsLockedOut)
+                        {
+                            return await fail(View("Lockout"));
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                            return await fail(View(model));
+                        }
+                    }
+                    else
+                    {
+                        return await fail(View(model));
+                    }                        
+                },
+                blocked => new HttpStatusCodeResult(405),
+                "ValidLogin:" + model.Email,
+                MaxValidLogin,
+                MaxValidLoginInterval,
+                "InvalidLogin:" + model.Email,
+                MaxInvalidLogin,
+                MaxInvalidLoginInterval,
+                originIP
+            );
+            
         }
 
         //
@@ -438,6 +468,8 @@ namespace HackerSpray.SampleDotNetCoreWebsite.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Seed()
         {
+            EnsureDatabaseCreated(_applicationDbContext);
+
             for (var i = 0; i < 100; i++)
             {
                 var result = await _userManager.CreateAsync(new ApplicationUser
