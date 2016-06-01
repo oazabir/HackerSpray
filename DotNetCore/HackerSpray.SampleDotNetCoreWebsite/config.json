@@ -1,6 +1,8 @@
 {
   "AppSettings": {
-    "SiteTitle": "HackerSpray.SampleDotNetCoreWebsite"
+    "SiteTitle": "HackerSpray.SampleDotNetCoreWebsite",
+    "RedisConnection": "localhost",
+    "RedisPrefix":  "AuthTest:"
   },
   "Data": {
     "DefaultConnection": {

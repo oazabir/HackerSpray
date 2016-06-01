@@ -23,6 +23,7 @@ using Microsoft.Framework.Runtime;
 using HackerSpray.SampleDotNetCoreWebsite.Models;
 using HackerSpray.SampleDotNetCoreWebsite.Services;
 using HackerSpray.SampleDotNetCoreWebsite.Migrations;
+using HackerSpray.Module;
 
 namespace HackerSpray.SampleDotNetCoreWebsite
 {
@@ -136,7 +137,11 @@ namespace HackerSpray.SampleDotNetCoreWebsite
             });
 
 
-            //SampleData.Initialize(app.ApplicationServices);
+            HackerSprayer.Store = new RedisDefenceStore(
+                Configuration.Get("AppSettings:RedisConnection"), 
+                Configuration.Get("AppSettings:RedisPrefix"), 
+                HackerSprayer.Config);
+
         }
     }
 }

@@ -63,7 +63,7 @@ namespace HackerSpray.SampleDotNetCoreWebsite.Controllers
         // POST: /Account/Login
         [HttpPost]
         [AllowAnonymous]
-        [ValidateAntiForgeryToken]
+        //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
         {
             SignInResult result = default(SignInResult);

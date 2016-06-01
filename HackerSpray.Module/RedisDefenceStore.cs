@@ -45,7 +45,7 @@ namespace HackerSpray.Module
 
         void IDisposable.Dispose()
         {
-
+            // Nothing to dispose
         }
 
         Task<bool> IDefenceStore.BlacklistKey(string key, TimeSpan expiry)
@@ -236,16 +236,17 @@ namespace HackerSpray.Module
         {
             var keys = this.db.SetMembersAsync(this.prefix + BLACKLIST_KEY_SET);
             var origins = this.db.SetMembersAsync(this.prefix + BLACKLIST_ORIGIN_SET);
-            var task = this.db.KeyDeleteAsync(this.prefix + BLACKLIST_ORIGIN_RANGE);
-
-            await Task.WhenAll(keys, origins, task);
+            
+            await Task.WhenAll(keys, origins);
 
             List<Task> tasks = new List<Task>();
-            var keysToDelete = Array.ConvertAll(keys.Result, k => (RedisKey)k.ToString());
-            var originsToDelete = Array.ConvertAll(origins.Result, k => (RedisKey)k.ToString());
-
-            tasks.Add(this.db.KeyDeleteAsync(keysToDelete));
-            tasks.Add(this.db.KeyDeleteAsync(originsToDelete));
+            foreach (var key in keys.Result)
+                tasks.Add(this.db.KeyDeleteAsync(key.ToString()));
+            foreach (var key in origins.Result)
+                tasks.Add(this.db.KeyDeleteAsync(key.ToString()));
+            
+            tasks.Add(this.db.KeyDeleteAsync(this.prefix + BLACKLIST_ORIGIN_RANGE));
+            tasks.Add(this.db.KeyDeleteAsync(this.prefix + BLACKLIST_KEY_SET));
 
             await Task.WhenAll(tasks);
             return true;
@@ -254,9 +255,11 @@ namespace HackerSpray.Module
         async Task<bool> IDefenceStore.ClearAllHits()
         {
             var keys = await this.db.ListRangeAsync(this.prefix + KEY_LIST);
-            var keysToDelete = Array.ConvertAll(keys, k => (RedisKey)k.ToString());
-            var result = await this.db.KeyDeleteAsync(keysToDelete);
-            return result == keys.Length;
+            List<Task> tasks = new List<Task>();
+            foreach (var key in keys)
+                tasks.Add(this.db.KeyDeleteAsync((RedisKey)key.ToString()));
+            await Task.WhenAll(tasks);
+            return await this.db.KeyDeleteAsync(this.prefix + KEY_LIST);            
         }
     }
 }

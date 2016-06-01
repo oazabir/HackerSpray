@@ -53,30 +53,26 @@ namespace HackerSpray.SampleWebSite.Controllers
             }
 
             User user = default(User);
-            return await HackerSprayer.Defend<ActionResult>(
-                    async (success, fail) =>
+            return await HackerSprayer.Defend<ActionResult>(async (success, fail) =>
+                {
+                    user = DataStore.Users.Where(u => u.Username == username 
+                                                && u.Password == password).FirstOrDefault();
+                    if (user!= null)
                     {
-                        user = DataStore.Users.Where(u => u.Username == username && u.Password == password).FirstOrDefault();
-                        if (user!= null)
-                        {
-                            Session[SessionConstants.USER] = user;
-                            return await success(RedirectToAction("Index", "Home"));
-                        }
-                        else
-                        {
-                            TempData[TempDataConstants.ERROR_MESSAGE] = "Invalid username or password";
-                            return await fail(View("~/Views/Account/LogOn.cshtml"));
-                        }
-                    },
-                    blocked => new HttpStatusCodeResult(HttpStatusCode.Forbidden),
-                    "ValidLogin:" + username,
-                    MaxValidLogin,
-                    MaxValidLoginInterval,
-                    "InvalidLogin:" + username,
-                    MaxInvalidLogin,
-                    MaxInvalidLoginInterval,
-                    originIP
-                );            
+                        Session[SessionConstants.USER] = user;
+                        return await success(RedirectToAction("Index", "Home"));
+                    }
+                    else
+                    {
+                        TempData[TempDataConstants.ERROR_MESSAGE] = "Invalid username or password";
+                        return await fail(View("~/Views/Account/LogOn.cshtml"));
+                    }
+                },
+                blocked => new HttpStatusCodeResult(HttpStatusCode.Forbidden),
+                "ValidLogin:" + username, MaxValidLogin, MaxValidLoginInterval,
+                "InvalidLogin:" + username, MaxInvalidLogin, MaxInvalidLoginInterval,
+                originIP
+            );            
             
 		}
 
@@ -90,10 +86,17 @@ namespace HackerSpray.SampleWebSite.Controllers
 			return RedirectToAction("Index", "Home");
 		}
 
-		//
-		// GET: /Account/Register
+        public async Task<ActionResult> ClearAllBlocks()
+        {
+            await HackerSprayer.ClearAllHitsAsync();
+            await HackerSprayer.ClearBlacklistsAsync();
+            return LogOff();
+        }
 
-		public ActionResult Register()
+        //
+        // GET: /Account/Register
+
+        public ActionResult Register()
 		{
 			return View("~/Views/Account/Register.cshtml");
         }

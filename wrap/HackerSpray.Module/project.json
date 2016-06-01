@@ -1,0 +1,16 @@
+{
+  "version": "1.0.0-*",
+  "frameworks": {
+    "net45": {
+      "wrappedProject": "../../HackerSpray.Module/HackerSpray.Module.csproj",
+      "bin": {
+        "assembly": "../../HackerSpray.Module/obj/{configuration}/HackerSpray.Module.dll",
+        "pdb": "../../HackerSpray.Module/obj/{configuration}/HackerSpray.Module.pdb"
+      },
+      "dependencies": {
+        "redis-64": "3.0.501",
+        "StackExchange.Redis": "1.1.603"
+      }
+    }
+  }
+}

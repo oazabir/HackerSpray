@@ -12,6 +12,9 @@ namespace HackerSpray.SampleWebSite
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
+            routes.IgnoreRoute("{file}.js");
+            routes.IgnoreRoute("{file}.css");
+            routes.IgnoreRoute("{file}.html");
 
             routes.MapRoute(
                 name: "Default",
