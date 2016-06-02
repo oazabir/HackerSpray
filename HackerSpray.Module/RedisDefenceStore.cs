@@ -104,9 +104,13 @@ namespace HackerSpray.Module
 
         Task<HitStats> IDefenceStore.IncrementHit(string key, IPAddress origin)
         {
-            return ((IDefenceStore)this).IncrementHit(key, origin, this.config.MaxHitsPerKeyInterval);
+            return ((IDefenceStore)this).IncrementHit(key, origin, 
+                this.config.MaxHitsPerKeyInterval,
+                this.config.MaxHitsPerOriginInterval,
+                this.config.MaxHitsPerKeyPerOriginInterval);
         }
-        async Task<HitStats> IDefenceStore.IncrementHit(string key, IPAddress origin, TimeSpan keyInterval)
+        async Task<HitStats> IDefenceStore.IncrementHit(string key, IPAddress origin, 
+            TimeSpan keyInterval, TimeSpan originInterval, TimeSpan keyOriginInterval)
         {
             var stats = new HitStats
             {
@@ -133,19 +137,19 @@ namespace HackerSpray.Module
             // If any of the counter was created for the first time,
             // need to set expiration time for them.
             var writeTasks = new List<Task>();
-            if (originTask.Result == 1)
+            if (originTask.Result == 1 && originInterval != TimeSpan.MaxValue)
             {
-                writeTasks.Add(this.db.KeyExpireAsync(originkey, now + this.config.MaxHitsPerOriginInterval));
+                writeTasks.Add(this.db.KeyExpireAsync(originkey, now + originInterval));
                 writeTasks.Add(RecordNewKey(originkey));
             }
-            if (keyTask.Result == 1)
+            if (keyTask.Result == 1 && keyInterval != TimeSpan.MaxValue)
             {
                 writeTasks.Add(this.db.KeyExpireAsync(keyKey, now + keyInterval));
                 writeTasks.Add(RecordNewKey(keyKey));
             }
-            if (keyOriginTask.Result == 1)
+            if (keyOriginTask.Result == 1 && keyOriginInterval != TimeSpan.MaxValue)
             {
-                writeTasks.Add(this.db.KeyExpireAsync(keyoriginkey, now + this.config.MaxHitsPerKeyPerOriginInterval));
+                writeTasks.Add(this.db.KeyExpireAsync(keyoriginkey, now + keyOriginInterval));
                 writeTasks.Add(RecordNewKey(keyoriginkey));
             }
 

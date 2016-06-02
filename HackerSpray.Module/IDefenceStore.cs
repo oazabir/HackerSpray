@@ -10,7 +10,7 @@ namespace HackerSpray.Module
     public interface IDefenceStore : IDisposable
     {
         Task<HitStats> IncrementHit(string key, IPAddress origin);
-        Task<HitStats> IncrementHit(string key, IPAddress origin, TimeSpan keyInterval);
+        Task<HitStats> IncrementHit(string key, IPAddress origin, TimeSpan keyInterval, TimeSpan originInterval, TimeSpan keyOriginInterval);
         Task<long> GetHitsForKey(string key);
         Task<long> GetHitsFromOrigin(IPAddress origin);
         Task<bool> WhitelistKey(string key);

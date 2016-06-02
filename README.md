@@ -1,5 +1,23 @@
 # Hacker Spray
-A .NET library to defend websites against brute force attacks and malicious attempts. 
+
+![HackerSprayLogo.png](docs/HackerSprayLogo.png) 
+
+A .NET library to defend websites against brute force attacks and malicious attempts. Protect login, registration, password reset pages against brute force attacks. Block users from performing any action too many times. Prevent too many hits from any IP or IP Range. Blacklist/Whitelist specific IP, IP range, username, URLs, transactions for a period.
+
+# How it works
+
+Hacker Spray uses Redis to maintain high performance counters for actions and origin IPs. Clients call ``HackerSpray.Defend(key, ip)`` to check if a certain key or IP has made too many hits. Clients can maintain blacklists for key, IP or IP Range. HackerSpray checks against too many hits on a key, too many hits on a IP, or IP falling within blacklists.
+
+Example calls:
+
+```c#
+HackerSpray.Defend("/Account/LogOn", Request.UserHostAddress);
+HackerSpray.Defend("/Account/PasswordReset", Request.UserHostAddress, TimeSpan.FromMinutes(5), 100);
+HackerSpray.Defend("Username" + username, Request.UserHostAddress);
+HackerSpray.Defend("Comment", Request.UserHostAddress);
+```
+
+Hacker Spray is a fully non-blocking IO, .NET 4.5 async library, maximizing use of Redis pipeline to produce least amount of network traffic and latency. It uses the ``StackExchange.Redis`` client.
 
 # Getting Started
 ## Nuget

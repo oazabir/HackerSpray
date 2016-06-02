@@ -53,7 +53,7 @@ namespace HackerSpray.SampleWebSite.Controllers
             }
 
             User user = default(User);
-            return await HackerSprayer.Defend<ActionResult>(async (success, fail) =>
+            return await HackerSprayer.DefendAsync<ActionResult>(async (success, fail) =>
                 {
                     user = DataStore.Users.Where(u => u.Username == username 
                                                 && u.Password == password).FirstOrDefault();

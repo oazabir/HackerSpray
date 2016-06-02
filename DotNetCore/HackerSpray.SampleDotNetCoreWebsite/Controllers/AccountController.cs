@@ -75,7 +75,7 @@ namespace HackerSpray.SampleDotNetCoreWebsite.Controllers
             var originIP = Request.Headers["X-Forward-For"] == null ? Context.Connection.RemoteIpAddress.MapToIPv4()
                 : IPAddress.Parse(Request.Headers["X-Forward-For"]).MapToIPv4();
 
-            return await HackerSprayer.Defend<IActionResult>(async (success, fail) =>
+            return await HackerSprayer.DefendAsync<IActionResult>(async (success, fail) =>
                 {
                     ViewData["ReturnUrl"] = returnUrl;
                     if (ModelState.IsValid)

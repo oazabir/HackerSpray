@@ -30,43 +30,33 @@ namespace HackerSpray.Module
             TooManyHitsOnKey,
             TooManyHitsOnKeyFromOrigin
         }
-        public static async Task<Result> DefendAsync(string key, IPAddress origin)
+        public static Task<Result> DefendAsync(string key, IPAddress origin)
         {
-            if (await Store.IsOriginBlacklisted(origin))
-                return Result.OriginBlocked;
-
-            var hitStats = await Store.IncrementHit(key, origin);
-
-            if (hitStats.HitsOnKeyFromOrigin > Config.MaxHitsPerKeyPerOrigin)
-                return Result.TooManyHitsOnKeyFromOrigin;
-
-            if (hitStats.HitsOnKey > Config.MaxHitsPerKey)
-                return Result.TooManyHitsOnKey;
-
-            if (hitStats.HitsFromOrigin > Config.MaxHitsPerOrigin)
-                return Result.TooManyHitsFromOrigin;
-            
-            if (await Store.IsKeyBlacklisted(key))
-                return Result.KeyBlocked;
-            
-            return Result.Allowed;
+            return DefendAsync(key, origin,
+                Config.MaxHitsPerKeyInterval, Config.MaxHitsPerKey,
+                Config.MaxHitsPerOriginInterval, Config.MaxHitsPerOrigin,
+                Config.MaxHitsPerKeyPerOriginInterval, Config.MaxHitsPerKeyPerOrigin);
         }
 
-        public static async Task<Result> DefendAsync(string key, IPAddress origin, TimeSpan interval, long maxHit)
+        public static async Task<Result> DefendAsync(string key, IPAddress origin, 
+            TimeSpan keyInterval, long keyMaxHit,
+            TimeSpan originInterval, long originMaxHit,
+            TimeSpan keyOriginInterval, long keyOriginMaxHit)
         {
             if (await Store.IsOriginBlacklisted(origin))
                 return Result.OriginBlocked;
 
-            var hitStats = await Store.IncrementHit(key, origin, interval);
+            var hitStats = await Store.IncrementHit(key, origin, 
+                keyInterval, originInterval, keyOriginInterval);
 
-            if (hitStats.HitsOnKeyFromOrigin > Config.MaxHitsPerKeyPerOrigin)
-                return Result.TooManyHitsOnKeyFromOrigin;
-
-            if (hitStats.HitsOnKey > maxHit)
+            if (hitStats.HitsOnKey > keyMaxHit)
                 return Result.TooManyHitsOnKey;
 
-            if (hitStats.HitsFromOrigin > Config.MaxHitsPerOrigin)
+            if (hitStats.HitsFromOrigin > originMaxHit)
                 return Result.TooManyHitsFromOrigin;
+
+            if (hitStats.HitsOnKeyFromOrigin > keyOriginMaxHit)
+                return Result.TooManyHitsOnKeyFromOrigin;
 
             if (await Store.IsKeyBlacklisted(key))
                 return Result.KeyBlocked;
@@ -145,7 +135,7 @@ namespace HackerSpray.Module
         }
 
 
-        public static async Task<TResult> Defend<TResult>(            
+        public static async Task<TResult> DefendAsync<TResult>(            
             Func<Func<TResult, Task<TResult>>, Func<TResult, Task<TResult>>, Task<TResult>> work,             
             Func<HackerSprayer.Result, TResult> blocked,
             string validActionKey,
@@ -162,7 +152,9 @@ namespace HackerSpray.Module
                     validActionKey,
                     origin,
                     validAttemptInterval,
-                    maxValidAttempt);
+                    maxValidAttempt,
+                    TimeSpan.MaxValue, long.MaxValue,
+                    TimeSpan.MaxValue, long.MaxValue);
 
                 if (result == HackerSprayer.Result.TooManyHitsOnKey)
                 {
@@ -181,7 +173,9 @@ namespace HackerSpray.Module
                     invalidActionKey,
                     origin,
                     invalidAttemptInterval,
-                    maxInvalidAttempt);
+                    maxInvalidAttempt,
+                    TimeSpan.MaxValue, long.MaxValue,
+                    TimeSpan.MaxValue, long.MaxValue);
 
                 if (result == HackerSprayer.Result.TooManyHitsOnKey)
                 {
@@ -199,5 +193,7 @@ namespace HackerSpray.Module
 
             return await work(success, fail);
         }
+
+        
     }
 }
