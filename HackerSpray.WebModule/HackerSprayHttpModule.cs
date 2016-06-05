@@ -8,7 +8,7 @@ using System.Web;
 
 namespace HackerSpray.WebModule
 {
-    public class HackerSprayModule : IHttpModule
+    public class HackerSprayHttpModule : IHttpModule
     {
         public static string PathToDefend;
         
@@ -38,7 +38,7 @@ namespace HackerSpray.WebModule
 
             if (result != HackerSprayer.Result.Allowed)
             {
-                context.Response.StatusCode = (int)HttpStatusCode.MethodNotAllowed;
+                context.Response.StatusCode = (int)HttpStatusCode.NotAcceptable;
                 context.Response.StatusDescription = Enum.GetName(typeof(HackerSprayer.Result), result);
                 context.Response.End();
             }

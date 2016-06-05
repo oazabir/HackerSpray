@@ -43,9 +43,12 @@ namespace HackerSpray.Module
             TimeSpan originInterval, long originMaxHit,
             TimeSpan keyOriginInterval, long keyOriginMaxHit)
         {
+            // First check origin for blacklisting, since this is the most common
+            // scenario for blocking attacks. 
             if (await Store.IsOriginBlacklisted(origin))
                 return Result.OriginBlocked;
 
+            // If origin not blocked, increase the hit counters. 
             var hitStats = await Store.IncrementHit(key, origin, 
                 keyInterval, originInterval, keyOriginInterval);
 
@@ -58,6 +61,9 @@ namespace HackerSpray.Module
             if (hitStats.HitsOnKeyFromOrigin > keyOriginMaxHit)
                 return Result.TooManyHitsOnKeyFromOrigin;
 
+            // Finally check the key. You could do it earlier. But then 
+            // You will miss the hit counters and you won't be able to 
+            // monitor traffic going to each blocked key to take any decision
             if (await Store.IsKeyBlacklisted(key))
                 return Result.KeyBlocked;
 
@@ -146,6 +152,11 @@ namespace HackerSpray.Module
             TimeSpan invalidAttemptInterval,
             IPAddress origin)
         {
+            if (await HackerSprayer.IsKeyBlacklistedAsync(invalidActionKey))
+            {
+                return blocked(HackerSprayer.Result.KeyBlocked);
+            }
+
             Func<TResult, Task<TResult>> success = async (returnType) =>
             {
                 var result = await HackerSprayer.DefendAsync(
@@ -185,11 +196,6 @@ namespace HackerSpray.Module
 
                 return returnType;
             };
-
-            if (await HackerSprayer.IsKeyBlacklistedAsync(invalidActionKey))
-            {
-                return blocked(HackerSprayer.Result.KeyBlocked);
-            }
 
             return await work(success, fail);
         }

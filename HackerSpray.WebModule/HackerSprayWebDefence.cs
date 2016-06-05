@@ -34,9 +34,11 @@ namespace HackerSpray.WebModule
 
             // This handles load balancers passing the original client IP
             // through this header. 
-            // WARNING: If you load balancer is not passing original client IP
+            // WARNING: If your load balancer is not passing original client IP
             // through this header, then you will be blocking your load balancer,
             // causing a total outage. Also ensure this Header cannot be spoofed.
+            // Your load balancer should be configured in a way that it does not accept
+            // this header from the request, instead it always sets it itself.
             var originIP = IPAddress.Parse(context.Request.Headers["X-Forward-For"]
                ?? context.Request.UserHostAddress).MapToIPv4();
 

@@ -22,12 +22,6 @@ namespace HackerSpray.SampleWebSite
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
-
-            if (Convert.ToBoolean(ConfigurationManager.AppSettings["HackerSprayEnabled"]))
-            {
-                HackerSprayer.Store = new RedisDefenceStore(ConfigurationManager.AppSettings["RedisConnection"], ConfigurationManager.AppSettings["RedisPrefix"], HackerSprayer.Config);
-                HackerSprayModule.PathToDefend = ConfigurationManager.AppSettings["PathToDefend"] ?? "/";
-            }
         }
     }
 }

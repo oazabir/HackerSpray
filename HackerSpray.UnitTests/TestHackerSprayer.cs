@@ -292,25 +292,37 @@ namespace HackerSpray.UnitTests
                 {
                     Assert.AreEqual(
                     HackerSprayer.Result.Allowed,
-                    HackerSprayer.DefendAsync(key, ip, interval, maxHits).Run(),
+                    HackerSprayer.DefendAsync(key, ip, 
+                        interval, maxHits,
+                        TimeSpan.MaxValue, long.MaxValue,
+                        TimeSpan.MaxValue, long.MaxValue).Run(),
                     "Allow hits on key for custom interval");
                 });
 
             Assert.AreEqual(
                     HackerSprayer.Result.TooManyHitsOnKey,
-                    HackerSprayer.DefendAsync(key, ip, interval, maxHits).Run(),
+                    HackerSprayer.DefendAsync(key, ip, 
+                        interval, maxHits,
+                        TimeSpan.MaxValue, long.MaxValue,
+                        TimeSpan.MaxValue, long.MaxValue).Run(),
                     "Must not allow hits on key after custom interval");
 
             Assert.AreEqual(
                     HackerSprayer.Result.Allowed,
-                    HackerSprayer.DefendAsync("InvalidLogin-" + GetRandomKey(), ip, interval, maxHits).Run(),
+                    HackerSprayer.DefendAsync("InvalidLogin-" + GetRandomKey(), ip, 
+                        interval, maxHits,
+                        TimeSpan.MaxValue, long.MaxValue,
+                        TimeSpan.MaxValue, long.MaxValue).Run(),
                     "Allow hits on different key from same IP");
 
             WaitForIntervalToElapse(interval, startTime);
 
             Assert.AreEqual(
                     HackerSprayer.Result.Allowed,
-                    HackerSprayer.DefendAsync(key, ip, interval, maxHits).Run(),
+                    HackerSprayer.DefendAsync(key, ip, 
+                        interval, maxHits,
+                        TimeSpan.MaxValue, long.MaxValue,
+                        TimeSpan.MaxValue, long.MaxValue).Run(),
                     "Allow hits on key for after interval has passed.");
         }
 

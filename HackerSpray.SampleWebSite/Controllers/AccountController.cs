@@ -52,10 +52,9 @@ namespace HackerSpray.SampleWebSite.Controllers
                 return View("~/Views/Account/LogOn.cshtml");
             }
 
-            User user = default(User);
             return await HackerSprayer.DefendAsync<ActionResult>(async (success, fail) =>
                 {
-                    user = DataStore.Users.Where(u => u.Username == username 
+                    var user = DataStore.Users.Where(u => u.Username == username 
                                                 && u.Password == password).FirstOrDefault();
                     if (user!= null)
                     {

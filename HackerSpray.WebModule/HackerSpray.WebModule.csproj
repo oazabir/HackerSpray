@@ -44,7 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HackerSprayConfig.cs" />
-    <Compile Include="HackerSprayModule.cs" />
+    <Compile Include="HackerSprayHttpModule.cs" />
     <Compile Include="HackerSprayWebDefence.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
