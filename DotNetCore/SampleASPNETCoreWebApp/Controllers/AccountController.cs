@@ -11,6 +11,8 @@ using Microsoft.Extensions.Logging;
 using SampleASPNETCoreWebApp.Models;
 using SampleASPNETCoreWebApp.Models.AccountViewModels;
 using SampleASPNETCoreWebApp.Services;
+using HackerSpray.Module;
+using System.Net;
 
 namespace SampleASPNETCoreWebApp.Controllers
 {
@@ -54,38 +56,87 @@ namespace SampleASPNETCoreWebApp.Controllers
         //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
         {
-            
-            ViewData["ReturnUrl"] = returnUrl;
-            if (ModelState.IsValid)
+            // This handles load balancers passing the original client IP
+            // through this header. 
+            // WARNING: If you load balancer is not passing original client IP
+            // through this header, then you will be blocking your load balancer,
+            // causing a total outage. Also ensure this Header cannot be spoofed.
+            var originIP = Request.Headers.ContainsKey("X-Forward-For") ?
+                IPAddress.Parse(Request.Headers["X-Forward-For"]).MapToIPv4()
+                : Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4();
+                
+            return await HackerSprayer.DefendAsync<IActionResult>(async (success, fail) =>
             {
-                // This doesn't count login failures towards account lockout
-                // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
-                if (result.Succeeded)
+                // Don't forget to do this check! We use model.Email for key.
+                if (string.IsNullOrWhiteSpace(model.Email) || string.IsNullOrWhiteSpace(model.Password))
                 {
-                    _logger.LogInformation(1, "User logged in.");
-                    return RedirectToLocal(returnUrl);
+                    return await fail(View(model));
                 }
-                if (result.RequiresTwoFactor)
+                ViewData["ReturnUrl"] = returnUrl;
+                if (ModelState.IsValid)
                 {
-                    return RedirectToAction(nameof(SendCode), new { ReturnUrl = returnUrl, RememberMe = model.RememberMe });
+                    // This doesn't count login failures towards account lockout
+                    // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+                    var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: false);
+                    if (result.Succeeded)
+                    {
+                        _logger.LogInformation(1, "User logged in.");
+                        return await success(RedirectToLocal(returnUrl));
+                    }
+                    if (result.RequiresTwoFactor)
+                    {
+                        return await success(RedirectToAction(nameof(SendCode), new { ReturnUrl = returnUrl, RememberMe = model.RememberMe }));
+                    }
+                    if (result.IsLockedOut)
+                    {
+                        _logger.LogWarning(2, "User account locked out.");
+                        return await fail(View("Lockout"));
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                        return await fail(View(model));
+                    }
                 }
-                if (result.IsLockedOut)
-                {
-                    _logger.LogWarning(2, "User account locked out.");
-                    return View("Lockout");
-                }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
-                    return View(model);
-                }
-            }
 
-            // If we got this far, something failed, redisplay form
-            return View(model);
+                // If we got this far, something failed, redisplay form
+                return await fail(View(model));
+            },
+            blocked => new StatusCodeResult((int)HttpStatusCode.Forbidden),
+            "ValidLogin:" + model.Email, 10, TimeSpan.FromMinutes(10),
+            "InvalidLogin:" + model.Email, 3, TimeSpan.FromMinutes(15),
+            originIP);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> ClearAllBlocks()
+        {
+            await HackerSprayer.ClearAllHitsAsync();
+            await HackerSprayer.ClearBlacklistsAsync();
+            return await LogOff();
+        }
+
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<IActionResult> Seed()
+        {
+            for (var i = 0; i < 100; i++)
+            {
+                var result = await _userManager.CreateAsync(new ApplicationUser
+                {
+                    Email = $"user{i}@user.com",
+                    EmailConfirmed = true,
+                    NormalizedEmail = $"USER{i}@USER.COM",
+                    UserName = $"user{i}@user.com",
+                    NormalizedUserName = $"USER{i}@USER.COM",
+                    SecurityStamp = Guid.NewGuid().ToString("D")
+                }, $"Password{i}!");
+                if (!result.Succeeded)
+                    throw new Exception(result.ToString());
+            }
+
+            return View();
+        }
         //
         // GET: /Account/Register
         [HttpGet]

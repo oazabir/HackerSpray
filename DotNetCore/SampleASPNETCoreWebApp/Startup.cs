@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using SampleASPNETCoreWebApp.Data;
 using SampleASPNETCoreWebApp.Models;
 using SampleASPNETCoreWebApp.Services;
+using HackerSpray.Module;
 
 namespace SampleASPNETCoreWebApp
 {
@@ -83,6 +84,9 @@ namespace SampleASPNETCoreWebApp
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+
+            var config = Configuration.GetSection("HackerSpray");
+            HackerSprayer.Store = new RedisDefenceStore(config["Connection"], config["Prefix"], HackerSprayer.Config);
         }
     }
 }
