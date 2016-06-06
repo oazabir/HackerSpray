@@ -13,6 +13,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using System.Net;
 using Microsoft.AspNetCore.Http.Features;
+using HackerSpray.Module;
+using System.Threading;
 
 namespace HackerSpray.Middleware.Test
 {
@@ -80,6 +82,32 @@ namespace HackerSpray.Middleware.Test
             // Assert
             Assert.AreEqual("Hello World!",
                 responseString);
+        }
+
+        [TestMethod]
+        public async Task TestBruteForceOnAccountLogOn()
+        {
+            await HackerSprayer.ClearAllHitsAsync();
+
+            var forResult = Parallel.For(0, 10, async p =>
+            {
+                var response = await _server.CreateClient().PostAsync("/Account/LogOn",
+                    new StringContent("Email=user1@user.com&Password=Password1!"));
+                response.EnsureSuccessStatusCode();
+
+                var responseString = await response.Content.ReadAsStringAsync();
+
+                // Assert
+                Assert.AreEqual("Hello World!", responseString);
+            });
+
+            while (!forResult.IsCompleted)
+                Thread.Sleep(100);
+
+            var blockedResponse = await _server.CreateClient().PostAsync("/Account/LogOn",
+                    new StringContent("Email=user1@user.com&Password=Password1!"));
+            Assert.AreEqual(HttpStatusCode.NotAcceptable, blockedResponse.StatusCode,
+                "Hit should be blocked after maximum number of hits made.");
         }
     }
 }
