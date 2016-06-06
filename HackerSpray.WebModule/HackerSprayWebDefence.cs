@@ -1,6 +1,7 @@
 ﻿using HackerSpray.Module;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -13,6 +14,7 @@ namespace HackerSpray.WebModule
     {
         private static bool Initialized = false;
         private static object lockObject = new object();
+        private static readonly string ClassName = typeof(HackerSprayWebDefence).Name;
 
         public static async Task<HackerSprayer.Result> DefendURL(HttpContext context)
         {
@@ -24,10 +26,12 @@ namespace HackerSpray.WebModule
                 {
                     if (!Initialized)
                     {
+                        Trace.TraceInformation(ClassName, "Initialize");
                         Initialized = true;
                         HackerSprayer.Store = new RedisDefenceStore(HackerSprayConfig.Settings.Redis,
                             HackerSprayConfig.Settings.Prefix,
                             HackerSprayer.Config);
+                        Trace.TraceInformation(ClassName + " Initialized");
                     }
                 }
             }
@@ -48,35 +52,44 @@ namespace HackerSpray.WebModule
                     || (!path.Post && context.Request.HttpMethod == "GET")
                     && path.Name == context.Request.Path)
                 {
-                    if (path.Mode == "perkey")
+                    Trace.TraceInformation(ClassName + " Path matched" + context.Request.Path);
+                    if (path.Mode == "key")
+                    {
                         result = await HackerSprayer.DefendAsync(context.Request.Path, originIP,
                             path.Interval, path.MaxAttempts,
                             TimeSpan.MaxValue, long.MaxValue,
                             TimeSpan.MaxValue, long.MaxValue);
-                    else if (path.Mode == "perorigin")
+
+                        if (result == HackerSprayer.Result.TooManyHitsOnKey)
+                        {
+                            Trace.TraceInformation(ClassName + " TooManyHitsOnKey Blacklist Path:" + context.Request.Path);
+                            await HackerSprayer.BlacklistKeyAsync(path.Name, path.Interval);
+                        }
+                    }
+                    else if (path.Mode == "origin")
+                    {
                         result = await HackerSprayer.DefendAsync(context.Request.Path, originIP,
                             TimeSpan.MaxValue, long.MaxValue,
                             path.Interval, path.MaxAttempts,
                             TimeSpan.MaxValue, long.MaxValue);
-                    else //(path.Mode == "perkeyorigin")
+                        if (result == HackerSprayer.Result.TooManyHitsFromOrigin)
+                        {
+                            Trace.TraceInformation(ClassName + " TooManyHitsFromOrigin Blacklist origin:" + originIP);
+                            await HackerSprayer.BlacklistOriginAsync(originIP, path.Interval);
+                        }
+                    }
+                    else //(path.Mode == "key+origin")
+                    {
                         result = await HackerSprayer.DefendAsync(context.Request.Path, originIP,
                             TimeSpan.MaxValue, long.MaxValue,
                             TimeSpan.MaxValue, long.MaxValue,
                             path.Interval, path.MaxAttempts);
-
-                    // Blacklist origin. After that, it becomes least expensive to block requests
-                    if (result == HackerSprayer.Result.TooManyHitsFromOrigin)
-                        await HackerSprayer.BlacklistOriginAsync(originIP, path.Interval);
-                    else if (result == HackerSprayer.Result.TooManyHitsOnKey)
-                        await HackerSprayer.BlacklistKeyAsync(path.Name, path.Interval);
-                    //else if (result == HackerSprayer.Result.TooManyHitsOnKeyFromOrigin)
-                    // There is nothing for that, because we neither want to block the key for all ip,
-                    // nor do we want to block the ip for all key. It just has to be checked each 
-                    // and every time. Thus this is the most expensive check.
+                    }
+                    
                     break;
                 }
             }
-
+                        
             return result;
         }
     }

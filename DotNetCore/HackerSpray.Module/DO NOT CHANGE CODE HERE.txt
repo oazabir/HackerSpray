@@ -1,0 +1,3 @@
+﻿This .net core version of the project must not be changed. Change the .NET 4.5 one, which then gets copied here after build automatically.
+
+This project is created only to generate a .net core version of the DLL.

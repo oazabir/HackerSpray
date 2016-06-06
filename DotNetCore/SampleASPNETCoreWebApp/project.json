@@ -38,7 +38,8 @@
       "version": "1.0.0-preview1-final",
       "type": "build"
     },
-    "HackerSpray.Module": "1.0.0-*"
+    "HackerSpray.Module": "1.0.0-*",
+    "HackerSpray.Middleware": "1.0.0-*"
   },
 
   "tools": {

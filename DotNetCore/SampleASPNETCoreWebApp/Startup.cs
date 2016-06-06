@@ -12,7 +12,7 @@ using Microsoft.Extensions.Logging;
 using SampleASPNETCoreWebApp.Data;
 using SampleASPNETCoreWebApp.Models;
 using SampleASPNETCoreWebApp.Services;
-using HackerSpray.Module;
+using HackerSpray.Middleware;
 
 namespace SampleASPNETCoreWebApp
 {
@@ -53,6 +53,8 @@ namespace SampleASPNETCoreWebApp
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
+
+            services.AddSingleton<HackerSprayOption>(Configuration.GetHackerSprayConfiguration());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -77,7 +79,7 @@ namespace SampleASPNETCoreWebApp
             app.UseIdentity();
 
             // Add external authentication middleware below. To configure them please see http://go.microsoft.com/fwlink/?LinkID=532715
-
+            
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
@@ -85,8 +87,9 @@ namespace SampleASPNETCoreWebApp
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            var config = Configuration.GetSection("HackerSpray");
-            HackerSprayer.Store = new RedisDefenceStore(config["Connection"], config["Prefix"], HackerSprayer.Config);
+            //var config = Configuration.GetSection("HackerSpray");
+            //HackerSprayer.Store = new RedisDefenceStore(config["Connection"], config["Prefix"], HackerSprayer.Config);
+            app.UseHackerSpray();
         }
     }
 }

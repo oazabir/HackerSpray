@@ -11,6 +11,7 @@ using Moq;
 using HackerSpray.SampleWebSite.Constants;
 using System.Configuration;
 using HackerSpray.SampleWebSite.Models;
+using HackerSpray.WebModule;
 
 namespace HackerSpray.WebTest
 {
@@ -27,9 +28,9 @@ namespace HackerSpray.WebTest
             HackerSprayer.Config.MaxHitsPerOriginInterval = TimeSpan.FromMinutes(1);
             HackerSprayer.Config.MaxHitsPerKeyPerOriginInterval = TimeSpan.FromMinutes(1);
 
-            ConfigurationManager.AppSettings["HackerSprayEnabled"] = "true";
-            HackerSprayer.Store = new RedisDefenceStore("localhost", "HttpDefenceTest-", HackerSprayer.Config);
-            //HackerSprayer.Store = new RedisDefenceStore("10.187.146.206:7001,10.187.146.206:7002,10.187.146.206:7003,10.187.146.207:7001,10.187.146.207:7002,10.187.146.207:7003", "HttpDefenceTest-", HackerSprayer.Config);
+            HackerSprayer.Store = new RedisDefenceStore(HackerSprayConfig.Settings.Redis,
+                            HackerSprayConfig.Settings.Prefix,
+                            HackerSprayer.Config);
         }
 
         private AccountController GetAccountController()
@@ -40,8 +41,6 @@ namespace HackerSpray.WebTest
             request.Setup(r => r.UserHostAddress).Returns(IPAddress.Loopback.ToString());
             return controller;
         }
-
-
 
         [TestMethod]
         public void TestValidLogin()

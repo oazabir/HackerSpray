@@ -2,6 +2,7 @@
 using HackerSpray.Module;
 using System;
 using System.Configuration;
+using System.Diagnostics;
 using System.Net;
 using System.Threading.Tasks;
 using System.Web;
@@ -11,7 +12,8 @@ namespace HackerSpray.WebModule
     public class HackerSprayHttpModule : IHttpModule
     {
         public static string PathToDefend;
-        
+        private static readonly string ClassName = typeof(HackerSprayHttpModule).Name;
+
         /// <summary>
         /// You will need to configure this module in the Web.config file of your
         /// web and register it with IIS before being able to use it. For more information
@@ -34,18 +36,21 @@ namespace HackerSpray.WebModule
         {
             var context = ((HttpApplication)sender).Context;
 
+            Trace.TraceInformation(ClassName +" Before DefendURL: " + context.Request.Path);
+
             HackerSprayer.Result result = await HackerSprayWebDefence.DefendURL(context);
+            var resultName = Enum.GetName(typeof(HackerSprayer.Result), result);
+
+            Trace.TraceInformation(ClassName + " After DefendURL: " + context.Request.Path + " Result: " + resultName);
 
             if (result != HackerSprayer.Result.Allowed)
             {
                 context.Response.StatusCode = (int)HttpStatusCode.NotAcceptable;
-                context.Response.StatusDescription = Enum.GetName(typeof(HackerSprayer.Result), result);
+                context.Response.StatusDescription = resultName;
                 context.Response.End();
             }
 
-        }
-
-        
+        }        
 
         #endregion
     }
