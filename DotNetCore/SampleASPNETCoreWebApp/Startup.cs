@@ -54,7 +54,7 @@ namespace SampleASPNETCoreWebApp
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
 
-            services.AddSingleton<HackerSprayOption>(Configuration.GetHackerSprayConfiguration());
+            services.AddHackerSpray(Configuration.GetSection("HackerSpray"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -87,8 +87,6 @@ namespace SampleASPNETCoreWebApp
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            //var config = Configuration.GetSection("HackerSpray");
-            //HackerSprayer.Store = new RedisDefenceStore(config["Connection"], config["Prefix"], HackerSprayer.Config);
             app.UseHackerSpray();
         }
     }
