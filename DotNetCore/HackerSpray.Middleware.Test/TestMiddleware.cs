@@ -27,12 +27,14 @@ namespace HackerSpray.Middleware.Test
         [TestInitialize]
         public void Init()
         {
-            _server = GetServer();
+            _server = GetServer();            
         }
 
         [TestCleanup]
         public void Cleanup()
         {
+            HackerSprayer.ClearAllHitsAsync();
+            HackerSprayer.ClearBlacklistsAsync();
             if (_server != null)
                 _server.Dispose();
         }
@@ -58,6 +60,7 @@ namespace HackerSpray.Middleware.Test
                    {                       
                        if (context.Request.Path == "/Account/LogOn")
                        {
+                           context.Response.StatusCode = (int)HttpStatusCode.OK;
                            await context.Response.WriteAsync("Hello World!");
                        }
                    }));
@@ -73,6 +76,9 @@ namespace HackerSpray.Middleware.Test
         [TestMethod]
         public async Task TestAccountLogOn()
         {
+            await HackerSprayer.ClearAllHitsAsync();
+            await HackerSprayer.ClearBlacklistsAsync();
+
             var response = await _server.CreateClient().PostAsync("/Account/LogOn",
                 new StringContent("Email=user1@user.com&Password=Password1!"));
             response.EnsureSuccessStatusCode();
@@ -88,26 +94,64 @@ namespace HackerSpray.Middleware.Test
         public async Task TestBruteForceOnAccountLogOn()
         {
             await HackerSprayer.ClearAllHitsAsync();
+            await HackerSprayer.ClearBlacklistsAsync();
 
-            var forResult = Parallel.For(0, 10, async p =>
+            var startTime = DateTime.Now;
+            // Perform brute force login 
+            var forResult = Parallel.For(0, 99, async p =>
             {
-                var response = await _server.CreateClient().PostAsync("/Account/LogOn",
-                    new StringContent("Email=user1@user.com&Password=Password1!"));
-                response.EnsureSuccessStatusCode();
-
-                var responseString = await response.Content.ReadAsStringAsync();
+                string responseString = await HitLoginPage(HttpStatusCode.OK,
+                    "Hit must be allowed from IP until limit is reached");
 
                 // Assert
                 Assert.AreEqual("Hello World!", responseString);
             });
 
-            while (!forResult.IsCompleted)
-                Thread.Sleep(100);
+            forResult.Wait();
 
-            var blockedResponse = await _server.CreateClient().PostAsync("/Account/LogOn",
-                    new StringContent("Email=user1@user.com&Password=Password1!"));
-            Assert.AreEqual(HttpStatusCode.NotAcceptable, blockedResponse.StatusCode,
-                "Hit should be blocked after maximum number of hits made.");
+            await HitLoginPage(HttpStatusCode.OK, "Hit must be allowed from IP until limit is reached");
+
+            // Ensure any extra hit is now blocked
+            await HitLoginPage(HttpStatusCode.NotAcceptable, "Hit should be blocked after maximum number of hits made.");
+
+            // Hits from different IP must be allowed
+            var diffClient = _server.CreateClient();
+            diffClient.DefaultRequestHeaders.Add("X-Forwarded-For", "127.0.0.2");
+
+            var allowedResponse = await diffClient.PostAsync("/Account/LogOn", new StringContent("body"));
+            await allowedResponse.Content.ReadAsStringAsync();
+            Assert.AreEqual(HttpStatusCode.OK, allowedResponse.StatusCode,
+                "Hit must be allowed from other IP");
+
+
+            // wait for unblock period
+            WaitForIntervalToElapse(TimeSpan.FromMinutes(1), startTime);
+
+            await HitLoginPage(HttpStatusCode.OK, "Hit must be allowed from IP until limit is reached");
+
+        }
+
+        private async Task<string> HitLoginPage(HttpStatusCode expected, string msg)
+        {
+            var response = await _server.CreateClient().PostAsync("/Account/LogOn", new StringContent("body"));
+            Assert.AreEqual(expected, response.StatusCode, msg);
+            var responseString = await response.Content.ReadAsStringAsync();
+            return responseString;
+        }
+
+        private static void WaitForIntervalToElapse(TimeSpan interval, DateTime startTime)
+        {
+            Thread.Sleep(interval - (DateTime.Now - startTime));
+            Thread.Sleep(TimeSpan.FromSeconds(5));
+        }
+
+    }
+
+    public static class TestExtensions
+    {
+        public static void Wait(this ParallelLoopResult result)
+        {
+            while (!result.IsCompleted) Thread.Sleep(100);
         }
     }
 }

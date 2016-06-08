@@ -43,7 +43,7 @@ namespace HackerSpray.WebModule
             // causing a total outage. Also ensure this Header cannot be spoofed.
             // Your load balancer should be configured in a way that it does not accept
             // this header from the request, instead it always sets it itself.
-            var originIP = IPAddress.Parse(context.Request.Headers["X-Forward-For"]
+            var originIP = IPAddress.Parse(context.Request.Headers["X-Forwarded-For"]
                ?? context.Request.UserHostAddress).MapToIPv4();
 
             foreach (var path in HackerSprayConfig.Settings.Paths)

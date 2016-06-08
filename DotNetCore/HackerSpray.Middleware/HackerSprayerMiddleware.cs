@@ -18,6 +18,7 @@ namespace HackerSpray.Middleware
         private readonly ILogger _logger;
         private static HackerSprayOption _option;
         private static HackerSprayOptionKey[] _keys;
+        private const string XForwardedForHeader = "X-Forwarded-For";
 
         private static object _lockObject = new object();
         public HackerSprayerMiddleware(RequestDelegate next, ILoggerFactory loggerFactory, HackerSprayOption option)
@@ -100,8 +101,8 @@ namespace HackerSpray.Middleware
                 // Your load balancer should be configured in a way that it does not accept
                 // this header from the request, instead it always sets it itself.
                 var originIP = context.Request.HttpContext.Connection.RemoteIpAddress;
-                if (context.Request.Headers.ContainsKey("X-Forward-For"))
-                    originIP = IPAddress.Parse(context.Request.Headers["X-Forward-For"]).MapToIPv4();
+                if (context.Request.Headers.ContainsKey(XForwardedForHeader))
+                    originIP = IPAddress.Parse(context.Request.Headers[XForwardedForHeader]).MapToIPv4();
 
                 var result = HackerSprayer.Result.Allowed;
                 foreach (var key in _keys)
