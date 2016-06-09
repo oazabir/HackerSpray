@@ -8,9 +8,9 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace HackerSpray.Middleware.Test
+namespace HackerSpray.Middleware
 {
-    public class XForwardForMiddleware
+    public class XForwardedForMiddleware
     {
         private readonly RequestDelegate _next;
         private readonly ILogger _logger;
@@ -20,10 +20,10 @@ namespace HackerSpray.Middleware.Test
         private const string XOriginalProtoName = "X-Original-Proto";
         private const string XOriginalIPName = "X-Original-IP";
 
-        public XForwardForMiddleware(RequestDelegate next, ILoggerFactory loggerFactory, HackerSprayOption option)
+        public XForwardedForMiddleware(RequestDelegate next, ILoggerFactory loggerFactory)
         {
             _next = next;
-            _logger = loggerFactory.CreateLogger<XForwardForMiddleware>();
+            _logger = loggerFactory.CreateLogger<XForwardedForMiddleware>();
         }
 
         public async Task Invoke(HttpContext httpContext)
@@ -57,8 +57,8 @@ namespace HackerSpray.Middleware.Test
                 }
             }
 
-            if (httpContext.Request.HttpContext.Connection.RemoteIpAddress == null)
-                httpContext.Request.HttpContext.Connection.RemoteIpAddress = IPAddress.Loopback;
+            if (httpContext.Connection.RemoteIpAddress == null)
+                httpContext.Connection.RemoteIpAddress = IPAddress.Loopback;
 
             await _next(httpContext);
         }
@@ -66,9 +66,9 @@ namespace HackerSpray.Middleware.Test
 
     public static class ClientIPMiddlewareExtensions
     {
-        public static IApplicationBuilder UseXForwardFor(this IApplicationBuilder builder)
+        public static IApplicationBuilder UseXForwardedFor(this IApplicationBuilder builder)
         {
-            return builder.UseMiddleware<XForwardForMiddleware>();
+            return builder.UseMiddleware<XForwardedForMiddleware>();
         }
     }
 }

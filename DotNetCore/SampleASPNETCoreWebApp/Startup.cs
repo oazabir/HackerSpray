@@ -75,6 +75,15 @@ namespace SampleASPNETCoreWebApp
             }
 
             app.UseStaticFiles();
+            
+            // WARNING: Unless the load balancer provides the real client IP in the
+            // X-Forwarded-For header, load balancer will get blocked, causing total
+            // outage. Or the load balancer should spoof IP packet to put the real 
+            // client IP instead of its own IP.
+            app.UseXForwardedFor();
+            // Put hacker spray as early as possible so that expensive code does not
+            // execute during brute force attacks.
+            app.UseHackerSpray();
 
             app.UseIdentity();
 
@@ -87,7 +96,8 @@ namespace SampleASPNETCoreWebApp
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
 
-            app.UseHackerSpray();
+            
+            
         }
     }
 }

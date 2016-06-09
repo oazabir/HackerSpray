@@ -56,15 +56,6 @@ namespace SampleASPNETCoreWebApp.Controllers
         //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
         {
-            // This handles load balancers passing the original client IP
-            // through this header. 
-            // WARNING: If you load balancer is not passing original client IP
-            // through this header, then you will be blocking your load balancer,
-            // causing a total outage. Also ensure this Header cannot be spoofed.
-            var originIP = Request.Headers.ContainsKey("X-Forward-For") ?
-                IPAddress.Parse(Request.Headers["X-Forward-For"]).MapToIPv4()
-                : Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4();
-                
             return await HackerSprayer.DefendAsync<IActionResult>(async (success, fail) =>
             {
                 // Don't forget to do this check! We use model.Email for key.
@@ -105,7 +96,7 @@ namespace SampleASPNETCoreWebApp.Controllers
             blocked => new StatusCodeResult((int)HttpStatusCode.Forbidden),
             "ValidLogin:" + model.Email, 10, TimeSpan.FromMinutes(10),
             "InvalidLogin:" + model.Email, 3, TimeSpan.FromMinutes(15),
-            originIP);
+            Request.HttpContext.Connection.RemoteIpAddress);
         }
 
         [HttpGet]

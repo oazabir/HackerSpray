@@ -53,12 +53,12 @@ namespace HackerSpray.Middleware.Test
                    loggerFactory.AddConsole(config.GetSection("Logging"));
                    loggerFactory.AddDebug();
 
-                   app.UseXForwardFor();
+                   app.UseXForwardedFor();
                    app.UseHackerSpray();
 
                    app.Run((async (context) =>
                    {                       
-                       if (context.Request.Path == "/Account/LogOn")
+                       if (context.Request.Path == "/Account/Login")
                        {
                            context.Response.StatusCode = (int)HttpStatusCode.OK;
                            await context.Response.WriteAsync("Hello World!");
@@ -79,7 +79,7 @@ namespace HackerSpray.Middleware.Test
             await HackerSprayer.ClearAllHitsAsync();
             await HackerSprayer.ClearBlacklistsAsync();
 
-            var response = await _server.CreateClient().PostAsync("/Account/LogOn",
+            var response = await _server.CreateClient().PostAsync("/Account/Login",
                 new StringContent("Email=user1@user.com&Password=Password1!"));
             response.EnsureSuccessStatusCode();
 
@@ -118,7 +118,7 @@ namespace HackerSpray.Middleware.Test
             var diffClient = _server.CreateClient();
             diffClient.DefaultRequestHeaders.Add("X-Forwarded-For", "127.0.0.2");
 
-            var allowedResponse = await diffClient.PostAsync("/Account/LogOn", new StringContent("body"));
+            var allowedResponse = await diffClient.PostAsync("/Account/Login", new StringContent("body"));
             await allowedResponse.Content.ReadAsStringAsync();
             Assert.AreEqual(HttpStatusCode.OK, allowedResponse.StatusCode,
                 "Hit must be allowed from other IP");
@@ -133,7 +133,7 @@ namespace HackerSpray.Middleware.Test
 
         private async Task<string> HitLoginPage(HttpStatusCode expected, string msg)
         {
-            var response = await _server.CreateClient().PostAsync("/Account/LogOn", new StringContent("body"));
+            var response = await _server.CreateClient().PostAsync("/Account/Login", new StringContent("body"));
             Assert.AreEqual(expected, response.StatusCode, msg);
             var responseString = await response.Content.ReadAsStringAsync();
             return responseString;

@@ -100,18 +100,19 @@ namespace HackerSpray.Middleware
                 // causing a total outage. Also ensure this Header cannot be spoofed.
                 // Your load balancer should be configured in a way that it does not accept
                 // this header from the request, instead it always sets it itself.
-                var originIP = context.Request.HttpContext.Connection.RemoteIpAddress;
-                if (context.Request.Headers.ContainsKey(XForwardedForHeader))
-                    originIP = IPAddress.Parse(context.Request.Headers[XForwardedForHeader]).MapToIPv4();
+                var originIP = context.Connection.RemoteIpAddress;
+                //if (context.Request.Headers.ContainsKey(XForwardedForHeader))
+                //    originIP = IPAddress.Parse(context.Request.Headers[XForwardedForHeader]).MapToIPv4();
 
                 var result = HackerSprayer.Result.Allowed;
                 foreach (var key in _keys)
                 {
                     if (key.Method == context.Request.Method && key.Key == path)
                     {
+                        Debug("Defend: " + path);
                         if (key.Mode == HackerSprayOptionKey.HitCountMode.PerKey)
                         {
-                            result = await HackerSprayer.DefendAsync(context.Request.Path, originIP,
+                            result = await HackerSprayer.DefendAsync(path, originIP,
                                 key.Interval, key.MaxAttempts,
                                 TimeSpan.MaxValue, long.MaxValue,
                                 TimeSpan.MaxValue, long.MaxValue);
@@ -120,7 +121,7 @@ namespace HackerSpray.Middleware
                         }
                         else if (key.Mode == HackerSprayOptionKey.HitCountMode.PerOrigin)
                         {
-                            result = await HackerSprayer.DefendAsync(context.Request.Path, originIP,
+                            result = await HackerSprayer.DefendAsync(path, originIP,
                                 TimeSpan.MaxValue, long.MaxValue,
                                 key.Interval, key.MaxAttempts,
                                 TimeSpan.MaxValue, long.MaxValue);
@@ -129,11 +130,12 @@ namespace HackerSpray.Middleware
                                 await HackerSprayer.BlacklistOriginAsync(originIP, key.Interval);
                         }
                         else //(key.Item5 == Mode.PerKeyOrigin)
-                            result = await HackerSprayer.DefendAsync(context.Request.Path, originIP,
+                            result = await HackerSprayer.DefendAsync(path, originIP,
                                 TimeSpan.MaxValue, long.MaxValue,
                                 TimeSpan.MaxValue, long.MaxValue,
                                 key.Interval, key.MaxAttempts);
 
+                        Debug("Defend Result: " + Enum.GetName(typeof(HackerSprayer.Result), result));
                         break;
                     }
                 }
@@ -142,11 +144,14 @@ namespace HackerSpray.Middleware
                     await _next.Invoke(context);
                 else
                 {
+                    Debug("Blocked: " + path);
+                    _logger.LogInformation("Blocked: " + path);
+
                     context.Response.StatusCode = (int)HttpStatusCode.NotAcceptable;
                     await context.Response.WriteAsync(Enum.GetName(typeof(HackerSprayer.Result), result));
                 }
 
-                Debug("Finished handling request.");
+                Debug("Finished: " + path);
             }
             else
             {
