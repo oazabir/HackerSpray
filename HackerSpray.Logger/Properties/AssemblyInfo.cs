@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("HackerSpray.Logger")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("HackerSpray Logger")]
+[assembly: AssemblyDescription("A .NET library to protect websites from brute force and DOS attacks")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("HackerSpray.Logger")]
-[assembly: AssemblyCopyright("Copyright ©  2016")]
+[assembly: AssemblyCopyright("Copyright ©  Omar AL Zabir 2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

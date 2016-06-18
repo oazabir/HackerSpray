@@ -1,4 +1,7 @@
 {
+  "title": "HackerSpray .NET Core Middleware",
+  "copyright": "Copyright ©  Omar AL Zabir 2016",
+  "description": "A .NET library to protect websites from brute force and DOS attacks",
   "version": "1.0.0-*",
 
   "dependencies": {
