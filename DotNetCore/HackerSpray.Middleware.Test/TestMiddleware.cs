@@ -33,8 +33,8 @@ namespace HackerSpray.Middleware.Test
         [TestCleanup]
         public void Cleanup()
         {
-            HackerSprayer.ClearAllHitsAsync();
-            HackerSprayer.ClearBlacklistsAsync();
+            Hacker.ClearAllHitsAsync();
+            Hacker.ClearBlacklistsAsync();
             if (_server != null)
                 _server.Dispose();
         }
@@ -76,8 +76,8 @@ namespace HackerSpray.Middleware.Test
         [TestMethod]
         public async Task TestAccountLogOn()
         {
-            await HackerSprayer.ClearAllHitsAsync();
-            await HackerSprayer.ClearBlacklistsAsync();
+            await Hacker.ClearAllHitsAsync();
+            await Hacker.ClearBlacklistsAsync();
 
             var response = await _server.CreateClient().PostAsync("/Account/Login",
                 new StringContent("Email=user1@user.com&Password=Password1!"));
@@ -93,8 +93,8 @@ namespace HackerSpray.Middleware.Test
         [TestMethod]
         public async Task TestBruteForceOnAccountLogOn()
         {
-            await HackerSprayer.ClearAllHitsAsync();
-            await HackerSprayer.ClearBlacklistsAsync();
+            await Hacker.ClearAllHitsAsync();
+            await Hacker.ClearBlacklistsAsync();
 
             var startTime = DateTime.Now;
             // Perform brute force login 

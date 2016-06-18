@@ -21,16 +21,16 @@ namespace HackerSpray.WebTest
         [TestInitialize]
         public void Init()
         {
-            HackerSprayer.Config.MaxHitsPerKey = 15;
-            HackerSprayer.Config.MaxHitsPerOrigin = 20;
-            HackerSprayer.Config.MaxHitsPerKeyPerOrigin = 15;
-            HackerSprayer.Config.MaxHitsPerKeyInterval = TimeSpan.FromMinutes(1);
-            HackerSprayer.Config.MaxHitsPerOriginInterval = TimeSpan.FromMinutes(1);
-            HackerSprayer.Config.MaxHitsPerKeyPerOriginInterval = TimeSpan.FromMinutes(1);
+            Hacker.Config.MaxHitsPerKey = 15;
+            Hacker.Config.MaxHitsPerOrigin = 20;
+            Hacker.Config.MaxHitsPerKeyPerOrigin = 15;
+            Hacker.Config.MaxHitsPerKeyInterval = TimeSpan.FromMinutes(1);
+            Hacker.Config.MaxHitsPerOriginInterval = TimeSpan.FromMinutes(1);
+            Hacker.Config.MaxHitsPerKeyPerOriginInterval = TimeSpan.FromMinutes(1);
 
-            HackerSprayer.Store = new RedisDefenceStore(HackerSprayConfig.Settings.Redis,
+            Hacker.Store = new RedisDefenceStore(HackerSprayConfig.Settings.Redis,
                             HackerSprayConfig.Settings.Prefix,
-                            HackerSprayer.Config);
+                            Hacker.Config);
         }
 
         private AccountController GetAccountController()

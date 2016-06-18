@@ -56,7 +56,9 @@ namespace SampleASPNETCoreWebApp.Controllers
         //[ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model, string returnUrl = null)
         {
-            return await HackerSprayer.DefendAsync<IActionResult>(async (success, fail) =>
+            var clientIP = Request.HttpContext.Connection.RemoteIpAddress.MapToIPv4();
+
+            return await Hacker.DefendAsync<IActionResult>(async (success, fail) =>
             {
                 // Don't forget to do this check! We use model.Email for key.
                 if (string.IsNullOrWhiteSpace(model.Email) || string.IsNullOrWhiteSpace(model.Password))
@@ -93,17 +95,20 @@ namespace SampleASPNETCoreWebApp.Controllers
                 // If we got this far, something failed, redisplay form
                 return await fail(View(model));
             },
-            blocked => new StatusCodeResult((int)HttpStatusCode.Forbidden),
+            blocked => {
+                _logger.LogWarning("Blocked: " + clientIP + " " + model.Email);
+                return new StatusCodeResult((int)HttpStatusCode.Forbidden);
+                },
             "ValidLogin:" + model.Email, 10, TimeSpan.FromMinutes(10),
             "InvalidLogin:" + model.Email, 3, TimeSpan.FromMinutes(15),
-            Request.HttpContext.Connection.RemoteIpAddress);
+            clientIP);
         }
 
         [HttpGet]
         public async Task<IActionResult> ClearAllBlocks()
         {
-            await HackerSprayer.ClearAllHitsAsync();
-            await HackerSprayer.ClearBlacklistsAsync();
+            await Hacker.ClearAllHitsAsync();
+            await Hacker.ClearBlacklistsAsync();
             return await LogOff();
         }
 

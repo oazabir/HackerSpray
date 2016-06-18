@@ -1,4 +1,6 @@
-﻿using HackerSpray.Module;
+﻿using HackerSpray.Logger;
+using HackerSpray.Module;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,9 +18,9 @@ namespace HackerSpray.WebModule
         private static object lockObject = new object();
         private static readonly string ClassName = typeof(HackerSprayWebDefence).Name;
 
-        public static async Task<HackerSprayer.Result> DefendURL(HttpContext context)
+        public static async Task<Hacker.Result> DefendURL(HttpContext context)
         {
-            HackerSprayer.Result result = HackerSprayer.Result.Allowed;
+            Hacker.Result result = Hacker.Result.Allowed;
 
             if (!Initialized)
             {
@@ -26,12 +28,14 @@ namespace HackerSpray.WebModule
                 {
                     if (!Initialized)
                     {
-                        Trace.TraceInformation(ClassName, "Initialize");
-                        Initialized = true;
-                        HackerSprayer.Store = new RedisDefenceStore(HackerSprayConfig.Settings.Redis,
+                        Hacker.Logger.LogInformation(ClassName + ' ' + "Initialize");
+                        Hacker.Logger = new TraceLogger();
+                        Hacker.Store = new RedisDefenceStore(HackerSprayConfig.Settings.Redis,
                             HackerSprayConfig.Settings.Prefix,
-                            HackerSprayer.Config);
-                        Trace.TraceInformation(ClassName + " Initialized");
+                            Hacker.Config);
+                        Hacker.Logger.LogInformation(ClassName + ' ' + " Initialized");
+                        Initialized = true;
+
                     }
                 }
             }
@@ -52,35 +56,35 @@ namespace HackerSpray.WebModule
                     || (!path.Post && context.Request.HttpMethod == "GET")
                     && path.Name == context.Request.Path)
                 {
-                    Trace.TraceInformation(ClassName + " Path matched" + context.Request.Path);
+                    Hacker.Logger.LogInformation(ClassName + ' ' + "Path matched: " + context.Request.Path);
                     if (path.Mode == "key")
                     {
-                        result = await HackerSprayer.DefendAsync(context.Request.Path, originIP,
+                        result = await Hacker.DefendAsync(context.Request.Path, originIP,
                             path.Interval, path.MaxAttempts,
                             TimeSpan.MaxValue, long.MaxValue,
                             TimeSpan.MaxValue, long.MaxValue);
 
-                        if (result == HackerSprayer.Result.TooManyHitsOnKey)
+                        if (result == Hacker.Result.TooManyHitsOnKey)
                         {
-                            Trace.TraceInformation(ClassName + " TooManyHitsOnKey Blacklist Path:" + context.Request.Path);
-                            await HackerSprayer.BlacklistKeyAsync(path.Name, path.Interval);
+                            Hacker.Logger.LogInformation(ClassName + ' ' + "TooManyHitsOnKey Blacklist Path: " + context.Request.Path);
+                            await Hacker.BlacklistKeyAsync(path.Name, path.Interval);
                         }
                     }
                     else if (path.Mode == "origin")
                     {
-                        result = await HackerSprayer.DefendAsync(context.Request.Path, originIP,
+                        result = await Hacker.DefendAsync(context.Request.Path, originIP,
                             TimeSpan.MaxValue, long.MaxValue,
                             path.Interval, path.MaxAttempts,
                             TimeSpan.MaxValue, long.MaxValue);
-                        if (result == HackerSprayer.Result.TooManyHitsFromOrigin)
+                        if (result == Hacker.Result.TooManyHitsFromOrigin)
                         {
-                            Trace.TraceInformation(ClassName + " TooManyHitsFromOrigin Blacklist origin:" + originIP);
-                            await HackerSprayer.BlacklistOriginAsync(originIP, path.Interval);
+                            Hacker.Logger.LogInformation(ClassName + ' ' + "TooManyHitsFromOrigin Blacklist origin: " + originIP);
+                            await Hacker.BlacklistOriginAsync(originIP, path.Interval);
                         }
                     }
                     else //(path.Mode == "key+origin")
                     {
-                        result = await HackerSprayer.DefendAsync(context.Request.Path, originIP,
+                        result = await Hacker.DefendAsync(context.Request.Path, originIP,
                             TimeSpan.MaxValue, long.MaxValue,
                             TimeSpan.MaxValue, long.MaxValue,
                             path.Interval, path.MaxAttempts);

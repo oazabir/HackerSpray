@@ -4,7 +4,7 @@ In order to register the HttpModule, add these in your Global.asax Application_S
 
 if (Convert.ToBoolean(ConfigurationManager.AppSettings["HackerSprayEnabled"]))
 {
-    HackerSprayer.Store = new RedisDefenceStore(ConfigurationManager.AppSettings["RedisConnection"], ConfigurationManager.AppSettings["RedisPrefix"], HackerSprayer.Config);
+    Hacker.Store = new RedisDefenceStore(ConfigurationManager.AppSettings["RedisConnection"], ConfigurationManager.AppSettings["RedisPrefix"], Hacker.Config);
     HackerSprayModule.PathToDefend = ConfigurationManager.AppSettings["PathToDefend"] ?? "/";
 }
 

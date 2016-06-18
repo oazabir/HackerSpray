@@ -24,7 +24,7 @@ namespace HackerSpray.Middleware
         public HackerSprayerMiddleware(RequestDelegate next, ILoggerFactory loggerFactory, HackerSprayOption option)
         {
             _next = next;
-            _logger = loggerFactory.CreateLogger<HackerSprayerMiddleware>();
+            _logger = loggerFactory.CreateLogger("HackerSpray");
 
             if (_option == null)
             {
@@ -36,8 +36,9 @@ namespace HackerSpray.Middleware
 
                         _option = option;
 
-                        HackerSprayer.Store = new RedisDefenceStore(_option.Redis,
-                            _option.Prefix, HackerSprayer.Config);
+                        Hacker.Logger = _logger;
+                        Hacker.Store = new RedisDefenceStore(_option.Redis,
+                            _option.Prefix, Hacker.Config);
 
                         _keys = new HackerSprayOptionKey[_option.Keys.Count];
 
@@ -79,12 +80,7 @@ namespace HackerSpray.Middleware
             }
         }
 
-        private void Debug(string msg)
-        {
-            if (_logger.IsEnabled(LogLevel.Debug))
-                _logger.LogDebug(msg);
-        }
-
+       
         public async Task Invoke(HttpContext context)
         {
             var path = context.Request.Path;
@@ -104,7 +100,7 @@ namespace HackerSpray.Middleware
                 //if (context.Request.Headers.ContainsKey(XForwardedForHeader))
                 //    originIP = IPAddress.Parse(context.Request.Headers[XForwardedForHeader]).MapToIPv4();
 
-                var result = HackerSprayer.Result.Allowed;
+                var result = Hacker.Result.Allowed;
                 foreach (var key in _keys)
                 {
                     if (key.Method == context.Request.Method && key.Key == path)
@@ -112,43 +108,42 @@ namespace HackerSpray.Middleware
                         Debug("Defend: " + path);
                         if (key.Mode == HackerSprayOptionKey.HitCountMode.PerKey)
                         {
-                            result = await HackerSprayer.DefendAsync(path, originIP,
+                            result = await Hacker.DefendAsync(path, originIP,
                                 key.Interval, key.MaxAttempts,
                                 TimeSpan.MaxValue, long.MaxValue,
                                 TimeSpan.MaxValue, long.MaxValue);
-                            if (result == HackerSprayer.Result.TooManyHitsOnKey)
-                                await HackerSprayer.BlacklistKeyAsync(path, key.Interval);
+                            if (result == Hacker.Result.TooManyHitsOnKey)
+                                await Hacker.BlacklistKeyAsync(path, key.Interval);
                         }
                         else if (key.Mode == HackerSprayOptionKey.HitCountMode.PerOrigin)
                         {
-                            result = await HackerSprayer.DefendAsync(path, originIP,
+                            result = await Hacker.DefendAsync(path, originIP,
                                 TimeSpan.MaxValue, long.MaxValue,
                                 key.Interval, key.MaxAttempts,
                                 TimeSpan.MaxValue, long.MaxValue);
 
-                            if (result == HackerSprayer.Result.TooManyHitsFromOrigin)
-                                await HackerSprayer.BlacklistOriginAsync(originIP, key.Interval);
+                            if (result == Hacker.Result.TooManyHitsFromOrigin)
+                                await Hacker.BlacklistOriginAsync(originIP, key.Interval);
                         }
                         else //(key.Item5 == Mode.PerKeyOrigin)
-                            result = await HackerSprayer.DefendAsync(path, originIP,
+                            result = await Hacker.DefendAsync(path, originIP,
                                 TimeSpan.MaxValue, long.MaxValue,
                                 TimeSpan.MaxValue, long.MaxValue,
                                 key.Interval, key.MaxAttempts);
 
-                        Debug("Defend Result: " + Enum.GetName(typeof(HackerSprayer.Result), result));
+                        Debug("Defend Result: " + Enum.GetName(typeof(Hacker.Result), result));
                         break;
                     }
                 }
 
-                if (result == HackerSprayer.Result.Allowed)
+                if (result == Hacker.Result.Allowed)
                     await _next.Invoke(context);
                 else
                 {
-                    Debug("Blocked: " + path);
-                    _logger.LogInformation("Blocked: " + path);
+                    Info("Blocked: " + path);
 
                     context.Response.StatusCode = (int)HttpStatusCode.NotAcceptable;
-                    await context.Response.WriteAsync(Enum.GetName(typeof(HackerSprayer.Result), result));
+                    await context.Response.WriteAsync(Enum.GetName(typeof(Hacker.Result), result));
                 }
 
                 Debug("Finished: " + path);
@@ -157,6 +152,17 @@ namespace HackerSpray.Middleware
             {
                 await _next.Invoke(context);
             }
+        }
+
+        private void Info(string msg)
+        {
+            _logger.LogInformation(msg);
+        }
+
+        private void Debug(string msg)
+        {
+            if (_logger.IsEnabled(LogLevel.Debug))
+                _logger.LogDebug(msg);
         }
     }
 }

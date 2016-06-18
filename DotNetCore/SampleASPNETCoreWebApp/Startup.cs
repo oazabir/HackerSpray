@@ -13,6 +13,10 @@ using SampleASPNETCoreWebApp.Data;
 using SampleASPNETCoreWebApp.Models;
 using SampleASPNETCoreWebApp.Services;
 using HackerSpray.Middleware;
+using System.Diagnostics;
+using System.IO;
+using Serilog;
+using Serilog.Sinks.RollingFile;
 
 namespace SampleASPNETCoreWebApp
 {
@@ -33,6 +37,13 @@ namespace SampleASPNETCoreWebApp
 
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
+
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .Enrich.FromLogContext()
+                .WriteTo.Seq("http://localhost:5341")
+                .WriteTo.RollingFile(Path.Combine(env.ContentRootPath, "Data\\log-{Date}.txt"))
+                .CreateLogger();
         }
 
         public IConfigurationRoot Configuration { get; }
@@ -62,6 +73,8 @@ namespace SampleASPNETCoreWebApp
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
+            // Add Serilog to the logging pipeline
+            loggerFactory.AddSerilog();
 
             if (env.IsDevelopment())
             {
@@ -78,8 +91,8 @@ namespace SampleASPNETCoreWebApp
             
             // WARNING: Unless the load balancer provides the real client IP in the
             // X-Forwarded-For header, load balancer will get blocked, causing total
-            // outage. Or the load balancer should spoof IP packet to put the real 
-            // client IP instead of its own IP.
+            // outage. Or the load balancer should modify IP header to put original clien t
+            // IP, instead of its own IP
             app.UseXForwardedFor();
             // Put hacker spray as early as possible so that expensive code does not
             // execute during brute force attacks.

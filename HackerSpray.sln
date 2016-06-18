@@ -13,7 +13,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HackerSpray.WebTest", "Hack
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E429431D-E863-4579-B7C1-4D4A60CAD65C}"
 	ProjectSection(SolutionItems) = preProject
-		.travis.yml = .travis.yml
 		Readme.md = Readme.md
 	EndProjectSection
 EndProject
@@ -30,6 +29,8 @@ EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "HackerSpray.Middleware", "DotNetCore\HackerSpray.Middleware\HackerSpray.Middleware.xproj", "{E0264334-23C4-4C41-ABFD-ED6C7723A815}"
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "HackerSpray.Middleware.Test", "DotNetCore\HackerSpray.Middleware.Test\HackerSpray.Middleware.Test.xproj", "{15B8DA76-A6A0-4A49-9E83-E85392E1F77F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HackerSpray.Logger", "HackerSpray.Logger\HackerSpray.Logger.csproj", "{7B9B6468-2808-4CF0-9F98-758C1171E0E7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,6 +74,10 @@ Global
 		{15B8DA76-A6A0-4A49-9E83-E85392E1F77F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15B8DA76-A6A0-4A49-9E83-E85392E1F77F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15B8DA76-A6A0-4A49-9E83-E85392E1F77F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B9B6468-2808-4CF0-9F98-758C1171E0E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B9B6468-2808-4CF0-9F98-758C1171E0E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B9B6468-2808-4CF0-9F98-758C1171E0E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B9B6468-2808-4CF0-9F98-758C1171E0E7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -87,5 +92,6 @@ Global
 		{C8855B09-49D5-4BA4-ADA2-B501170BA978} = {4AA0BCAB-2822-4BD9-8457-041415DDF412}
 		{E0264334-23C4-4C41-ABFD-ED6C7723A815} = {4AA0BCAB-2822-4BD9-8457-041415DDF412}
 		{15B8DA76-A6A0-4A49-9E83-E85392E1F77F} = {4AA0BCAB-2822-4BD9-8457-041415DDF412}
+		{7B9B6468-2808-4CF0-9F98-758C1171E0E7} = {20988AEA-78ED-467A-92A1-F85B134E44AD}
 	EndGlobalSection
 EndGlobal

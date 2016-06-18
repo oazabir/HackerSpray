@@ -38,12 +38,12 @@ namespace HackerSpray.WebModule
 
             Trace.TraceInformation(ClassName +" Before DefendURL: " + context.Request.Path);
 
-            HackerSprayer.Result result = await HackerSprayWebDefence.DefendURL(context);
-            var resultName = Enum.GetName(typeof(HackerSprayer.Result), result);
+            Hacker.Result result = await HackerSprayWebDefence.DefendURL(context);
+            var resultName = Enum.GetName(typeof(Hacker.Result), result);
 
             Trace.TraceInformation(ClassName + " After DefendURL: " + context.Request.Path + " Result: " + resultName);
 
-            if (result != HackerSprayer.Result.Allowed)
+            if (result != Hacker.Result.Allowed)
             {
                 context.Response.StatusCode = (int)HttpStatusCode.NotAcceptable;
                 context.Response.StatusDescription = resultName;

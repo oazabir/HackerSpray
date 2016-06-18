@@ -1,0 +1,257 @@
+﻿2016-06-18 17:06:58.259 +01:00 [Information] User profile is available. Using '"C:\Users\604422604\AppData\Local\ASP.NET\DataProtection-Keys"' as key repository and Windows DPAPI to encrypt keys at rest.
+2016-06-18 17:07:00.655 +01:00 [Debug] Initializing HackerSpray options.
+2016-06-18 17:07:02.030 +01:00 [Debug] HackerSpray options processed
+2016-06-18 17:07:02.070 +01:00 [Debug] Hosting starting
+2016-06-18 17:07:02.173 +01:00 [Debug] Hosting started
+2016-06-18 17:07:02.347 +01:00 [Debug] Connection id ""0HKSNIAASIS0E"" started.
+2016-06-18 17:07:02.347 +01:00 [Debug] Connection id ""0HKSNIAASIS0F"" started.
+2016-06-18 17:07:02.516 +01:00 [Information] Request starting HTTP/1.1 GET http://localhost:60734/  
+2016-06-18 17:07:02.516 +01:00 [Information] Request starting HTTP/1.1 DEBUG http://localhost:60734/  0
+2016-06-18 17:07:02.675 +01:00 [Debug] The request path "/" does not match a supported file type
+2016-06-18 17:07:02.676 +01:00 [Debug] "DEBUG" requests are not supported
+2016-06-18 17:07:02.691 +01:00 [Debug] Handling request: /
+2016-06-18 17:07:02.691 +01:00 [Debug] Handling request: /
+2016-06-18 17:07:03.014 +01:00 [Debug] Request successfully matched the route with name '"default"' and template '"{controller=Home}/{action=Index}/{id?}"'.
+2016-06-18 17:07:03.014 +01:00 [Debug] Request successfully matched the route with name '"default"' and template '"{controller=Home}/{action=Index}/{id?}"'.
+2016-06-18 17:07:03.106 +01:00 [Debug] Executing action "SampleASPNETCoreWebApp.Controllers.HomeController.Index (SampleASPNETCoreWebApp)"
+2016-06-18 17:07:03.107 +01:00 [Debug] Executing action "SampleASPNETCoreWebApp.Controllers.HomeController.Index (SampleASPNETCoreWebApp)"
+2016-06-18 17:07:03.333 +01:00 [Information] Executing action method "SampleASPNETCoreWebApp.Controllers.HomeController.Index (SampleASPNETCoreWebApp)" with arguments (null) - ModelState is Valid'
+2016-06-18 17:07:03.333 +01:00 [Information] Executing action method "SampleASPNETCoreWebApp.Controllers.HomeController.Index (SampleASPNETCoreWebApp)" with arguments (null) - ModelState is Valid'
+2016-06-18 17:07:03.348 +01:00 [Debug] Executed action method "SampleASPNETCoreWebApp.Controllers.HomeController.Index (SampleASPNETCoreWebApp)", returned result "Microsoft.AspNetCore.Mvc.ViewResult".'
+2016-06-18 17:07:03.349 +01:00 [Debug] Executed action method "SampleASPNETCoreWebApp.Controllers.HomeController.Index (SampleASPNETCoreWebApp)", returned result "Microsoft.AspNetCore.Mvc.ViewResult".'
+2016-06-18 17:07:03.579 +01:00 [Debug] View lookup cache miss for view '"Index"' in controller '"Home"'.
+2016-06-18 17:07:03.579 +01:00 [Debug] View lookup cache miss for view '"Index"' in controller '"Home"'.
+2016-06-18 17:07:03.604 +01:00 [Debug] Code generation for the Razor file at '"/Views/Home/Index.cshtml"' started.
+2016-06-18 17:07:04.271 +01:00 [Debug] Code generation for the Razor file at '"/Views/Home/Index.cshtml"' completed in 664.1812ms.
+2016-06-18 17:07:04.291 +01:00 [Debug] Compilation of the generated code for the Razor file at '"/Views/Home/Index.cshtml"' started.
+2016-06-18 17:07:06.738 +01:00 [Debug] Compilation of the generated code for the Razor file at '"/Views/Home/Index.cshtml"' completed in 2446.2887ms.
+2016-06-18 17:07:06.743 +01:00 [Debug] Code generation for the Razor file at '"/Views/_ViewStart.cshtml"' started.
+2016-06-18 17:07:06.750 +01:00 [Debug] Code generation for the Razor file at '"/Views/_ViewStart.cshtml"' completed in 6.5346ms.
+2016-06-18 17:07:06.750 +01:00 [Debug] Compilation of the generated code for the Razor file at '"/Views/_ViewStart.cshtml"' started.
+2016-06-18 17:07:06.818 +01:00 [Debug] Compilation of the generated code for the Razor file at '"/Views/_ViewStart.cshtml"' completed in 67.5344ms.
+2016-06-18 17:07:06.829 +01:00 [Debug] The view '"Index"' was found.
+2016-06-18 17:07:06.829 +01:00 [Debug] The view '"Index"' was found.
+2016-06-18 17:07:06.835 +01:00 [Information] Executing ViewResult, running view at path "/Views/Home/Index.cshtml".
+2016-06-18 17:07:06.837 +01:00 [Information] Executing ViewResult, running view at path "/Views/Home/Index.cshtml".
+2016-06-18 17:07:07.019 +01:00 [Debug] View lookup cache miss for view '"_Layout"' in controller '"Home"'.
+2016-06-18 17:07:07.019 +01:00 [Debug] View lookup cache miss for view '"_Layout"' in controller '"Home"'.
+2016-06-18 17:07:07.020 +01:00 [Debug] Code generation for the Razor file at '"/Views/Shared/_Layout.cshtml"' started.
+2016-06-18 17:07:07.072 +01:00 [Debug] Code generation for the Razor file at '"/Views/Shared/_Layout.cshtml"' completed in 51.8838ms.
+2016-06-18 17:07:07.072 +01:00 [Debug] Compilation of the generated code for the Razor file at '"/Views/Shared/_Layout.cshtml"' started.
+2016-06-18 17:07:07.269 +01:00 [Debug] Compilation of the generated code for the Razor file at '"/Views/Shared/_Layout.cshtml"' completed in 195.8057ms.
+2016-06-18 17:07:07.366 +01:00 [Debug] View lookup cache miss for view '"_LoginPartial"' in controller '"Home"'.
+2016-06-18 17:07:07.366 +01:00 [Debug] View lookup cache miss for view '"_LoginPartial"' in controller '"Home"'.
+2016-06-18 17:07:07.368 +01:00 [Debug] Code generation for the Razor file at '"/Views/Shared/_LoginPartial.cshtml"' started.
+2016-06-18 17:07:07.422 +01:00 [Debug] Code generation for the Razor file at '"/Views/Shared/_LoginPartial.cshtml"' completed in 54.6694ms.
+2016-06-18 17:07:07.423 +01:00 [Debug] Compilation of the generated code for the Razor file at '"/Views/Shared/_LoginPartial.cshtml"' started.
+2016-06-18 17:07:07.490 +01:00 [Debug] Compilation of the generated code for the Razor file at '"/Views/Shared/_LoginPartial.cshtml"' completed in 66.5187ms.
+2016-06-18 17:07:07.840 +01:00 [Information] Executed action "SampleASPNETCoreWebApp.Controllers.HomeController.Index (SampleASPNETCoreWebApp)" in 4721.2716ms
+2016-06-18 17:07:07.842 +01:00 [Information] Executed action "SampleASPNETCoreWebApp.Controllers.HomeController.Index (SampleASPNETCoreWebApp)" in 4722.7652ms
+2016-06-18 17:07:07.869 +01:00 [Debug] Finished: /
+2016-06-18 17:07:07.869 +01:00 [Debug] Finished: /
+2016-06-18 17:07:07.942 +01:00 [Debug] Connection id ""0HKSNIAASIS0E"" received FIN.
+2016-06-18 17:07:07.960 +01:00 [Information] Request finished in 5489.7863ms 200 text/html; charset=utf-8
+2016-06-18 17:07:07.970 +01:00 [Information] Request finished in 5489.767ms 200 text/html; charset=utf-8
+2016-06-18 17:07:07.978 +01:00 [Debug] Connection id ""0HKSNIAASIS0E"" completed keep alive response.
+2016-06-18 17:07:07.978 +01:00 [Debug] Connection id ""0HKSNIAASIS0F"" completed keep alive response.
+2016-06-18 17:07:07.982 +01:00 [Debug] Connection id ""0HKSNIAASIS0E"" disconnecting.
+2016-06-18 17:07:07.984 +01:00 [Debug] Connection id ""0HKSNIAASIS0E"" sending FIN.
+2016-06-18 17:07:07.994 +01:00 [Debug] Connection id ""0HKSNIAASIS0E"" sent FIN with status "0".
+2016-06-18 17:07:07.999 +01:00 [Debug] Connection id ""0HKSNIAASIS0E"" stopped.
+2016-06-18 17:07:10.947 +01:00 [Information] Request starting HTTP/1.1 GET http://localhost:60734/Account/Login  
+2016-06-18 17:07:10.949 +01:00 [Debug] The request path "/Account/Login" does not match a supported file type
+2016-06-18 17:07:10.949 +01:00 [Debug] Handling request: /Account/Login
+2016-06-18 17:07:10.950 +01:00 [Debug] Defend: /Account/Login
+2016-06-18 17:07:11.065 +01:00 [Debug] Defend Result: Allowed
+2016-06-18 17:07:11.065 +01:00 [Debug] Request successfully matched the route with name '"default"' and template '"{controller=Home}/{action=Index}/{id?}"'.
+2016-06-18 17:07:11.081 +01:00 [Debug] Action '"SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)"' with id '"b4fd4b24-acbe-4160-bfac-19432a07e30a"' did not match the constraint '"Microsoft.AspNetCore.Mvc.Internal.HttpMethodActionConstraint"'
+2016-06-18 17:07:11.082 +01:00 [Debug] Executing action "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)"
+2016-06-18 17:07:11.159 +01:00 [Information] Executing action method "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)" with arguments ([""]) - ModelState is Valid'
+2016-06-18 17:07:11.161 +01:00 [Debug] Executed action method "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)", returned result "Microsoft.AspNetCore.Mvc.ViewResult".'
+2016-06-18 17:07:11.161 +01:00 [Debug] View lookup cache miss for view '"Login"' in controller '"Account"'.
+2016-06-18 17:07:11.162 +01:00 [Debug] Code generation for the Razor file at '"/Views/Account/Login.cshtml"' started.
+2016-06-18 17:07:11.256 +01:00 [Debug] Code generation for the Razor file at '"/Views/Account/Login.cshtml"' completed in 94.3169ms.
+2016-06-18 17:07:11.257 +01:00 [Debug] Compilation of the generated code for the Razor file at '"/Views/Account/Login.cshtml"' started.
+2016-06-18 17:07:11.700 +01:00 [Debug] Compilation of the generated code for the Razor file at '"/Views/Account/Login.cshtml"' completed in 443.3705ms.
+2016-06-18 17:07:11.701 +01:00 [Debug] The view '"Login"' was found.
+2016-06-18 17:07:11.705 +01:00 [Information] Executing ViewResult, running view at path "/Views/Account/Login.cshtml".
+2016-06-18 17:07:11.788 +01:00 [Debug] Reading data from file '"C:\Users\604422604\AppData\Local\ASP.NET\DataProtection-Keys\key-3bbacdb6-d022-40b5-9932-47913022c290.xml"'.
+2016-06-18 17:07:11.810 +01:00 [Debug] Reading data from file '"C:\Users\604422604\AppData\Local\ASP.NET\DataProtection-Keys\key-edb43121-cb67-4753-b381-5cb314410dea.xml"'.
+2016-06-18 17:07:11.821 +01:00 [Debug] Found key {3bbacdb6-d022-40b5-9932-47913022c290}.
+2016-06-18 17:07:11.832 +01:00 [Debug] Found key {edb43121-cb67-4753-b381-5cb314410dea}.
+2016-06-18 17:07:11.855 +01:00 [Debug] Considering key {3bbacdb6-d022-40b5-9932-47913022c290} with expiration date 2016-09-03 02:50:58Z as default key.
+2016-06-18 17:07:11.877 +01:00 [Debug] Decrypting secret element using Windows DPAPI.
+2016-06-18 17:07:11.892 +01:00 [Debug] Opening CNG algorithm '"AES"' from provider 'null' with chaining mode CBC.
+2016-06-18 17:07:11.907 +01:00 [Debug] Opening CNG algorithm '"SHA256"' from provider 'null' with HMAC.
+2016-06-18 17:07:11.933 +01:00 [Debug] Using key {3bbacdb6-d022-40b5-9932-47913022c290} as the default key.
+2016-06-18 17:07:11.959 +01:00 [Debug] A new antiforgery cookie token was created.
+2016-06-18 17:07:12.129 +01:00 [Debug] View lookup cache miss for view '"_Layout"' in controller '"Account"'.
+2016-06-18 17:07:12.131 +01:00 [Debug] View lookup cache miss for view '"_LoginPartial"' in controller '"Account"'.
+2016-06-18 17:07:12.134 +01:00 [Debug] View lookup cache miss for view '"_ValidationScriptsPartial"' in controller '"Account"'.
+2016-06-18 17:07:12.136 +01:00 [Debug] Code generation for the Razor file at '"/Views/Shared/_ValidationScriptsPartial.cshtml"' started.
+2016-06-18 17:07:12.146 +01:00 [Debug] Code generation for the Razor file at '"/Views/Shared/_ValidationScriptsPartial.cshtml"' completed in 10.3413ms.
+2016-06-18 17:07:12.147 +01:00 [Debug] Compilation of the generated code for the Razor file at '"/Views/Shared/_ValidationScriptsPartial.cshtml"' started.
+2016-06-18 17:07:12.212 +01:00 [Debug] Compilation of the generated code for the Razor file at '"/Views/Shared/_ValidationScriptsPartial.cshtml"' completed in 64.5928ms.
+2016-06-18 17:07:12.234 +01:00 [Information] Executed action "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)" in 1149.4121ms
+2016-06-18 17:07:12.235 +01:00 [Debug] Finished: /Account/Login
+2016-06-18 17:07:12.240 +01:00 [Information] Request finished in 1295.0472ms 200 text/html; charset=utf-8
+2016-06-18 17:07:12.241 +01:00 [Debug] Connection id ""0HKSNIAASIS0F"" completed keep alive response.
+2016-06-18 17:07:16.449 +01:00 [Information] Request starting HTTP/1.1 POST http://localhost:60734/Account/Login application/x-www-form-urlencoded 231
+2016-06-18 17:07:16.453 +01:00 [Debug] "POST" requests are not supported
+2016-06-18 17:07:16.455 +01:00 [Debug] Handling request: /Account/Login
+2016-06-18 17:07:16.455 +01:00 [Debug] Defend: /Account/Login
+2016-06-18 17:07:16.466 +01:00 [Debug] Defend Result: Allowed
+2016-06-18 17:07:16.470 +01:00 [Debug] Request successfully matched the route with name '"default"' and template '"{controller=Home}/{action=Index}/{id?}"'.
+2016-06-18 17:07:16.472 +01:00 [Debug] Action '"SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)"' with id '"9ea1ccdd-2eba-4064-a782-d764d676dad2"' did not match the constraint '"Microsoft.AspNetCore.Mvc.Internal.HttpMethodActionConstraint"'
+2016-06-18 17:07:16.473 +01:00 [Debug] Executing action "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)"
+2016-06-18 17:07:16.592 +01:00 [Information] Executing action method "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)" with arguments (["SampleASPNETCoreWebApp.Models.AccountViewModels.LoginViewModel", ""]) - ModelState is Valid'
+2016-06-18 17:07:17.848 +01:00 [Debug] Opening connection to database 'aspnet5-HackerSpray.SampleDotNetCoreWebsite-f6a67b61-ff0f-4456-9e9e-edc29843b443' on server '.\sqlexpress12'.
+2016-06-18 17:07:18.557 +01:00 [Information] Executed DbCommand (38ms) [Parameters=[@__normalizedUserName_0='?'], CommandType='Text', CommandTimeout='30']
+SELECT TOP(1) [u].[Id], [u].[AccessFailedCount], [u].[ConcurrencyStamp], [u].[Email], [u].[EmailConfirmed], [u].[LockoutEnabled], [u].[LockoutEnd], [u].[NormalizedEmail], [u].[NormalizedUserName], [u].[PasswordHash], [u].[PhoneNumber], [u].[PhoneNumberConfirmed], [u].[SecurityStamp], [u].[TwoFactorEnabled], [u].[UserName]
+FROM [AspNetUsers] AS [u]
+WHERE [u].[NormalizedUserName] = @__normalizedUserName_0
+2016-06-18 17:07:18.690 +01:00 [Debug] Closing connection to database 'aspnet5-HackerSpray.SampleDotNetCoreWebsite-f6a67b61-ff0f-4456-9e9e-edc29843b443' on server '.\sqlexpress12'.
+2016-06-18 17:07:18.804 +01:00 [Warning] Invalid password for user "c0266265-b71b-417d-b9d1-4e44a3f7300c".
+2016-06-18 17:07:18.807 +01:00 [Warning] User "c0266265-b71b-417d-b9d1-4e44a3f7300c" failed to provide the correct password.
+2016-06-18 17:07:18.821 +01:00 [Debug] Executed action method "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)", returned result "Microsoft.AspNetCore.Mvc.ViewResult".'
+2016-06-18 17:07:18.822 +01:00 [Debug] View lookup cache hit for view '"Login"' in controller '"Account"'.
+2016-06-18 17:07:18.822 +01:00 [Debug] The view '"Login"' was found.
+2016-06-18 17:07:18.825 +01:00 [Information] Executing ViewResult, running view at path "/Views/Account/Login.cshtml".
+2016-06-18 17:07:18.844 +01:00 [Debug] An antiforgery cookie token was reused.
+2016-06-18 17:07:18.854 +01:00 [Debug] View lookup cache hit for view '"_Layout"' in controller '"Account"'.
+2016-06-18 17:07:18.854 +01:00 [Debug] View lookup cache hit for view '"_LoginPartial"' in controller '"Account"'.
+2016-06-18 17:07:18.855 +01:00 [Debug] View lookup cache hit for view '"_ValidationScriptsPartial"' in controller '"Account"'.
+2016-06-18 17:07:18.871 +01:00 [Information] Executed action "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)" in 2396.1287ms
+2016-06-18 17:07:18.872 +01:00 [Debug] Finished: /Account/Login
+2016-06-18 17:07:18.886 +01:00 [Information] Request finished in 2433.501ms 200 text/html; charset=utf-8
+2016-06-18 17:07:18.886 +01:00 [Debug] Connection id ""0HKSNIAASIS0F"" completed keep alive response.
+2016-06-18 17:07:21.678 +01:00 [Information] Request starting HTTP/1.1 POST http://localhost:60734/Account/Login application/x-www-form-urlencoded 231
+2016-06-18 17:07:21.679 +01:00 [Debug] "POST" requests are not supported
+2016-06-18 17:07:21.680 +01:00 [Debug] Handling request: /Account/Login
+2016-06-18 17:07:21.681 +01:00 [Debug] Defend: /Account/Login
+2016-06-18 17:07:21.691 +01:00 [Debug] Defend Result: Allowed
+2016-06-18 17:07:21.692 +01:00 [Debug] Request successfully matched the route with name '"default"' and template '"{controller=Home}/{action=Index}/{id?}"'.
+2016-06-18 17:07:21.692 +01:00 [Debug] Action '"SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)"' with id '"9ea1ccdd-2eba-4064-a782-d764d676dad2"' did not match the constraint '"Microsoft.AspNetCore.Mvc.Internal.HttpMethodActionConstraint"'
+2016-06-18 17:07:21.693 +01:00 [Debug] Executing action "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)"
+2016-06-18 17:07:21.707 +01:00 [Information] Executing action method "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)" with arguments (["SampleASPNETCoreWebApp.Models.AccountViewModels.LoginViewModel", ""]) - ModelState is Valid'
+2016-06-18 17:07:21.818 +01:00 [Debug] Opening connection to database 'aspnet5-HackerSpray.SampleDotNetCoreWebsite-f6a67b61-ff0f-4456-9e9e-edc29843b443' on server '.\sqlexpress12'.
+2016-06-18 17:07:21.902 +01:00 [Information] Executed DbCommand (6ms) [Parameters=[@__normalizedUserName_0='?'], CommandType='Text', CommandTimeout='30']
+SELECT TOP(1) [u].[Id], [u].[AccessFailedCount], [u].[ConcurrencyStamp], [u].[Email], [u].[EmailConfirmed], [u].[LockoutEnabled], [u].[LockoutEnd], [u].[NormalizedEmail], [u].[NormalizedUserName], [u].[PasswordHash], [u].[PhoneNumber], [u].[PhoneNumberConfirmed], [u].[SecurityStamp], [u].[TwoFactorEnabled], [u].[UserName]
+FROM [AspNetUsers] AS [u]
+WHERE [u].[NormalizedUserName] = @__normalizedUserName_0
+2016-06-18 17:07:21.902 +01:00 [Debug] Closing connection to database 'aspnet5-HackerSpray.SampleDotNetCoreWebsite-f6a67b61-ff0f-4456-9e9e-edc29843b443' on server '.\sqlexpress12'.
+2016-06-18 17:07:21.942 +01:00 [Warning] Invalid password for user "c0266265-b71b-417d-b9d1-4e44a3f7300c".
+2016-06-18 17:07:21.949 +01:00 [Warning] User "c0266265-b71b-417d-b9d1-4e44a3f7300c" failed to provide the correct password.
+2016-06-18 17:07:21.954 +01:00 [Debug] Executed action method "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)", returned result "Microsoft.AspNetCore.Mvc.ViewResult".'
+2016-06-18 17:07:21.954 +01:00 [Debug] View lookup cache hit for view '"Login"' in controller '"Account"'.
+2016-06-18 17:07:21.955 +01:00 [Debug] The view '"Login"' was found.
+2016-06-18 17:07:21.957 +01:00 [Information] Executing ViewResult, running view at path "/Views/Account/Login.cshtml".
+2016-06-18 17:07:21.958 +01:00 [Debug] An antiforgery cookie token was reused.
+2016-06-18 17:07:21.959 +01:00 [Debug] View lookup cache hit for view '"_Layout"' in controller '"Account"'.
+2016-06-18 17:07:21.959 +01:00 [Debug] View lookup cache hit for view '"_LoginPartial"' in controller '"Account"'.
+2016-06-18 17:07:21.959 +01:00 [Debug] View lookup cache hit for view '"_ValidationScriptsPartial"' in controller '"Account"'.
+2016-06-18 17:07:21.967 +01:00 [Information] Executed action "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)" in 271.003ms
+2016-06-18 17:07:21.968 +01:00 [Debug] Finished: /Account/Login
+2016-06-18 17:07:21.979 +01:00 [Information] Request finished in 318.6714ms 200 text/html; charset=utf-8
+2016-06-18 17:07:21.980 +01:00 [Debug] Connection id ""0HKSNIAASIS0F"" completed keep alive response.
+2016-06-18 17:07:23.260 +01:00 [Information] Request starting HTTP/1.1 POST http://localhost:60734/Account/Login application/x-www-form-urlencoded 231
+2016-06-18 17:07:23.261 +01:00 [Debug] "POST" requests are not supported
+2016-06-18 17:07:23.262 +01:00 [Debug] Handling request: /Account/Login
+2016-06-18 17:07:23.262 +01:00 [Debug] Defend: /Account/Login
+2016-06-18 17:07:23.268 +01:00 [Debug] Defend Result: Allowed
+2016-06-18 17:07:23.269 +01:00 [Debug] Request successfully matched the route with name '"default"' and template '"{controller=Home}/{action=Index}/{id?}"'.
+2016-06-18 17:07:23.269 +01:00 [Debug] Action '"SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)"' with id '"9ea1ccdd-2eba-4064-a782-d764d676dad2"' did not match the constraint '"Microsoft.AspNetCore.Mvc.Internal.HttpMethodActionConstraint"'
+2016-06-18 17:07:23.269 +01:00 [Debug] Executing action "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)"
+2016-06-18 17:07:23.276 +01:00 [Information] Executing action method "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)" with arguments (["SampleASPNETCoreWebApp.Models.AccountViewModels.LoginViewModel", ""]) - ModelState is Valid'
+2016-06-18 17:07:23.279 +01:00 [Debug] Opening connection to database 'aspnet5-HackerSpray.SampleDotNetCoreWebsite-f6a67b61-ff0f-4456-9e9e-edc29843b443' on server '.\sqlexpress12'.
+2016-06-18 17:07:23.288 +01:00 [Information] Executed DbCommand (1ms) [Parameters=[@__normalizedUserName_0='?'], CommandType='Text', CommandTimeout='30']
+SELECT TOP(1) [u].[Id], [u].[AccessFailedCount], [u].[ConcurrencyStamp], [u].[Email], [u].[EmailConfirmed], [u].[LockoutEnabled], [u].[LockoutEnd], [u].[NormalizedEmail], [u].[NormalizedUserName], [u].[PasswordHash], [u].[PhoneNumber], [u].[PhoneNumberConfirmed], [u].[SecurityStamp], [u].[TwoFactorEnabled], [u].[UserName]
+FROM [AspNetUsers] AS [u]
+WHERE [u].[NormalizedUserName] = @__normalizedUserName_0
+2016-06-18 17:07:23.289 +01:00 [Debug] Closing connection to database 'aspnet5-HackerSpray.SampleDotNetCoreWebsite-f6a67b61-ff0f-4456-9e9e-edc29843b443' on server '.\sqlexpress12'.
+2016-06-18 17:07:23.302 +01:00 [Warning] Invalid password for user "c0266265-b71b-417d-b9d1-4e44a3f7300c".
+2016-06-18 17:07:23.305 +01:00 [Warning] User "c0266265-b71b-417d-b9d1-4e44a3f7300c" failed to provide the correct password.
+2016-06-18 17:07:23.309 +01:00 [Debug] Executed action method "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)", returned result "Microsoft.AspNetCore.Mvc.ViewResult".'
+2016-06-18 17:07:23.309 +01:00 [Debug] View lookup cache hit for view '"Login"' in controller '"Account"'.
+2016-06-18 17:07:23.310 +01:00 [Debug] The view '"Login"' was found.
+2016-06-18 17:07:23.312 +01:00 [Information] Executing ViewResult, running view at path "/Views/Account/Login.cshtml".
+2016-06-18 17:07:23.314 +01:00 [Debug] An antiforgery cookie token was reused.
+2016-06-18 17:07:23.315 +01:00 [Debug] View lookup cache hit for view '"_Layout"' in controller '"Account"'.
+2016-06-18 17:07:23.315 +01:00 [Debug] View lookup cache hit for view '"_LoginPartial"' in controller '"Account"'.
+2016-06-18 17:07:23.316 +01:00 [Debug] View lookup cache hit for view '"_ValidationScriptsPartial"' in controller '"Account"'.
+2016-06-18 17:07:23.323 +01:00 [Information] Executed action "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)" in 48.0436ms
+2016-06-18 17:07:23.324 +01:00 [Debug] Finished: /Account/Login
+2016-06-18 17:07:23.329 +01:00 [Information] Request finished in 69.0103ms 200 text/html; charset=utf-8
+2016-06-18 17:07:23.331 +01:00 [Debug] Connection id ""0HKSNIAASIS0F"" completed keep alive response.
+2016-06-18 17:07:24.451 +01:00 [Information] Request starting HTTP/1.1 POST http://localhost:60734/Account/Login application/x-www-form-urlencoded 231
+2016-06-18 17:07:24.453 +01:00 [Debug] "POST" requests are not supported
+2016-06-18 17:07:24.453 +01:00 [Debug] Handling request: /Account/Login
+2016-06-18 17:07:24.454 +01:00 [Debug] Defend: /Account/Login
+2016-06-18 17:07:24.458 +01:00 [Debug] Defend Result: Allowed
+2016-06-18 17:07:24.458 +01:00 [Debug] Request successfully matched the route with name '"default"' and template '"{controller=Home}/{action=Index}/{id?}"'.
+2016-06-18 17:07:24.459 +01:00 [Debug] Action '"SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)"' with id '"9ea1ccdd-2eba-4064-a782-d764d676dad2"' did not match the constraint '"Microsoft.AspNetCore.Mvc.Internal.HttpMethodActionConstraint"'
+2016-06-18 17:07:24.459 +01:00 [Debug] Executing action "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)"
+2016-06-18 17:07:24.462 +01:00 [Information] Executing action method "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)" with arguments (["SampleASPNETCoreWebApp.Models.AccountViewModels.LoginViewModel", ""]) - ModelState is Valid'
+2016-06-18 17:07:24.465 +01:00 [Debug] Opening connection to database 'aspnet5-HackerSpray.SampleDotNetCoreWebsite-f6a67b61-ff0f-4456-9e9e-edc29843b443' on server '.\sqlexpress12'.
+2016-06-18 17:07:24.471 +01:00 [Information] Executed DbCommand (0ms) [Parameters=[@__normalizedUserName_0='?'], CommandType='Text', CommandTimeout='30']
+SELECT TOP(1) [u].[Id], [u].[AccessFailedCount], [u].[ConcurrencyStamp], [u].[Email], [u].[EmailConfirmed], [u].[LockoutEnabled], [u].[LockoutEnd], [u].[NormalizedEmail], [u].[NormalizedUserName], [u].[PasswordHash], [u].[PhoneNumber], [u].[PhoneNumberConfirmed], [u].[SecurityStamp], [u].[TwoFactorEnabled], [u].[UserName]
+FROM [AspNetUsers] AS [u]
+WHERE [u].[NormalizedUserName] = @__normalizedUserName_0
+2016-06-18 17:07:24.471 +01:00 [Debug] Closing connection to database 'aspnet5-HackerSpray.SampleDotNetCoreWebsite-f6a67b61-ff0f-4456-9e9e-edc29843b443' on server '.\sqlexpress12'.
+2016-06-18 17:07:24.485 +01:00 [Warning] Invalid password for user "c0266265-b71b-417d-b9d1-4e44a3f7300c".
+2016-06-18 17:07:24.488 +01:00 [Warning] User "c0266265-b71b-417d-b9d1-4e44a3f7300c" failed to provide the correct password.
+2016-06-18 17:07:24.516 +01:00 [Warning] Blocked: 0.0.0.1 user1@user.com
+2016-06-18 17:07:24.517 +01:00 [Debug] Executed action method "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)", returned result "Microsoft.AspNetCore.Mvc.StatusCodeResult".'
+2016-06-18 17:07:24.527 +01:00 [Information] Executing HttpStatusCodeResult, setting HTTP status code 403
+2016-06-18 17:07:24.531 +01:00 [Information] Executed action "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)" in 68.9507ms
+2016-06-18 17:07:24.532 +01:00 [Debug] Finished: /Account/Login
+2016-06-18 17:07:24.534 +01:00 [Information] Request finished in 83.7486ms 403 
+2016-06-18 17:07:24.538 +01:00 [Debug] Connection id ""0HKSNIAASIS0F"" completed keep alive response.
+2016-06-18 17:07:27.821 +01:00 [Information] Request starting HTTP/1.1 POST http://localhost:60734/Account/Login application/x-www-form-urlencoded 231
+2016-06-18 17:07:27.822 +01:00 [Debug] "POST" requests are not supported
+2016-06-18 17:07:27.822 +01:00 [Debug] Handling request: /Account/Login
+2016-06-18 17:07:27.823 +01:00 [Debug] Defend: /Account/Login
+2016-06-18 17:07:27.828 +01:00 [Debug] Defend Result: Allowed
+2016-06-18 17:07:27.828 +01:00 [Debug] Request successfully matched the route with name '"default"' and template '"{controller=Home}/{action=Index}/{id?}"'.
+2016-06-18 17:07:27.829 +01:00 [Debug] Action '"SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)"' with id '"9ea1ccdd-2eba-4064-a782-d764d676dad2"' did not match the constraint '"Microsoft.AspNetCore.Mvc.Internal.HttpMethodActionConstraint"'
+2016-06-18 17:07:27.829 +01:00 [Debug] Executing action "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)"
+2016-06-18 17:07:27.833 +01:00 [Information] Executing action method "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)" with arguments (["SampleASPNETCoreWebApp.Models.AccountViewModels.LoginViewModel", ""]) - ModelState is Valid'
+2016-06-18 17:07:27.844 +01:00 [Warning] Blocked: 0.0.0.1 user1@user.com
+2016-06-18 17:07:27.844 +01:00 [Debug] Executed action method "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)", returned result "Microsoft.AspNetCore.Mvc.StatusCodeResult".'
+2016-06-18 17:07:27.848 +01:00 [Information] Executing HttpStatusCodeResult, setting HTTP status code 403
+2016-06-18 17:07:27.852 +01:00 [Information] Executed action "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)" in 18.707ms
+2016-06-18 17:07:27.852 +01:00 [Debug] Finished: /Account/Login
+2016-06-18 17:07:27.856 +01:00 [Information] Request finished in 35.1351ms 403 
+2016-06-18 17:07:27.856 +01:00 [Debug] Connection id ""0HKSNIAASIS0F"" completed keep alive response.
+2016-06-18 17:07:30.223 +01:00 [Information] Request starting HTTP/1.1 POST http://localhost:60734/Account/Login application/x-www-form-urlencoded 231
+2016-06-18 17:07:30.224 +01:00 [Debug] "POST" requests are not supported
+2016-06-18 17:07:30.225 +01:00 [Debug] Handling request: /Account/Login
+2016-06-18 17:07:30.226 +01:00 [Debug] Defend: /Account/Login
+2016-06-18 17:07:30.231 +01:00 [Debug] Defend Result: Allowed
+2016-06-18 17:07:30.232 +01:00 [Debug] Request successfully matched the route with name '"default"' and template '"{controller=Home}/{action=Index}/{id?}"'.
+2016-06-18 17:07:30.232 +01:00 [Debug] Action '"SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)"' with id '"9ea1ccdd-2eba-4064-a782-d764d676dad2"' did not match the constraint '"Microsoft.AspNetCore.Mvc.Internal.HttpMethodActionConstraint"'
+2016-06-18 17:07:30.232 +01:00 [Debug] Executing action "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)"
+2016-06-18 17:07:30.236 +01:00 [Information] Executing action method "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)" with arguments (["SampleASPNETCoreWebApp.Models.AccountViewModels.LoginViewModel", ""]) - ModelState is Valid'
+2016-06-18 17:07:30.244 +01:00 [Warning] Blocked: 0.0.0.1 user1@user.com
+2016-06-18 17:07:30.244 +01:00 [Debug] Executed action method "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)", returned result "Microsoft.AspNetCore.Mvc.StatusCodeResult".'
+2016-06-18 17:07:30.248 +01:00 [Information] Executing HttpStatusCodeResult, setting HTTP status code 403
+2016-06-18 17:07:30.252 +01:00 [Information] Executed action "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)" in 15.7847ms
+2016-06-18 17:07:30.252 +01:00 [Debug] Finished: /Account/Login
+2016-06-18 17:07:30.256 +01:00 [Information] Request finished in 32.9452ms 403 
+2016-06-18 17:07:30.256 +01:00 [Debug] Connection id ""0HKSNIAASIS0F"" completed keep alive response.
+2016-06-18 17:07:32.458 +01:00 [Information] Request starting HTTP/1.1 POST http://localhost:60734/Account/Login application/x-www-form-urlencoded 231
+2016-06-18 17:07:32.459 +01:00 [Debug] "POST" requests are not supported
+2016-06-18 17:07:32.460 +01:00 [Debug] Handling request: /Account/Login
+2016-06-18 17:07:32.461 +01:00 [Debug] Defend: /Account/Login
+2016-06-18 17:07:32.466 +01:00 [Debug] Defend Result: Allowed
+2016-06-18 17:07:32.467 +01:00 [Debug] Request successfully matched the route with name '"default"' and template '"{controller=Home}/{action=Index}/{id?}"'.
+2016-06-18 17:07:32.467 +01:00 [Debug] Action '"SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)"' with id '"9ea1ccdd-2eba-4064-a782-d764d676dad2"' did not match the constraint '"Microsoft.AspNetCore.Mvc.Internal.HttpMethodActionConstraint"'
+2016-06-18 17:07:32.467 +01:00 [Debug] Executing action "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)"
+2016-06-18 17:07:32.471 +01:00 [Information] Executing action method "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)" with arguments (["SampleASPNETCoreWebApp.Models.AccountViewModels.LoginViewModel", ""]) - ModelState is Valid'
+2016-06-18 17:07:32.481 +01:00 [Warning] Blocked: 0.0.0.1 user1@user.com
+2016-06-18 17:07:32.482 +01:00 [Debug] Executed action method "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)", returned result "Microsoft.AspNetCore.Mvc.StatusCodeResult".'
+2016-06-18 17:07:32.489 +01:00 [Information] Executing HttpStatusCodeResult, setting HTTP status code 403
+2016-06-18 17:07:32.493 +01:00 [Information] Executed action "SampleASPNETCoreWebApp.Controllers.AccountController.Login (SampleASPNETCoreWebApp)" in 21.6597ms
+2016-06-18 17:07:32.493 +01:00 [Debug] Finished: /Account/Login
+2016-06-18 17:07:32.498 +01:00 [Information] Request finished in 40.7005ms 403 
+2016-06-18 17:07:32.498 +01:00 [Debug] Connection id ""0HKSNIAASIS0F"" completed keep alive response.

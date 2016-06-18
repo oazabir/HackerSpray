@@ -49,6 +49,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\HackerSpray.Logger\HackerSpray.Logger.csproj">
+      <Project>{7B9B6468-2808-4CF0-9F98-758C1171E0E7}</Project>
+      <Name>HackerSpray.Logger</Name>
+    </ProjectReference>
     <ProjectReference Include="..\HackerSpray.Module\HackerSpray.Module.csproj">
       <Project>{1e92fa1f-dfd0-4d5e-b5d6-ad6acd5867b2}</Project>
       <Name>HackerSpray.Module</Name>

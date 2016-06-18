@@ -52,7 +52,7 @@ namespace HackerSpray.SampleWebSite.Controllers
                 return View("~/Views/Account/LogOn.cshtml");
             }
 
-            return await HackerSprayer.DefendAsync<ActionResult>(async (success, fail) =>
+            return await Hacker.DefendAsync<ActionResult>(async (success, fail) =>
                 {
                     var user = DataStore.Users.Where(u => u.Username == username 
                                                 && u.Password == password).FirstOrDefault();
@@ -87,8 +87,8 @@ namespace HackerSpray.SampleWebSite.Controllers
 
         public async Task<ActionResult> ClearAllBlocks()
         {
-            await HackerSprayer.ClearAllHitsAsync();
-            await HackerSprayer.ClearBlacklistsAsync();
+            await Hacker.ClearAllHitsAsync();
+            await Hacker.ClearBlacklistsAsync();
             return LogOff();
         }
 

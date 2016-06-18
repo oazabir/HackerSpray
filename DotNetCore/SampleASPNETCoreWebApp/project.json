@@ -39,7 +39,11 @@
       "type": "build"
     },
     "HackerSpray.Module": "1.0.0-*",
-    "HackerSpray.Middleware": "1.0.0-*"
+    "HackerSpray.Middleware": "1.0.0-*",
+    "System.Diagnostics.TextWriterTraceListener": "4.0.0-beta-23516",
+    "Serilog": "2.0.0-rc-622",
+    "Serilog.Sinks.Seq": "2.0.0-rc-55",
+    "Serilog.Extensions.Logging": "1.0.0-rc2-10110"
   },
 
   "tools": {
