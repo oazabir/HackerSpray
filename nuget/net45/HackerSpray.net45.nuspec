@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+    <metadata>
+        <id>HackerSpray</id>
+        <version>1.2.3</version>
+        <title>HackerSpray .NET 4</title>
+        <authors>Omar AL Zabir</authors>
+        <projectUrl>https://github.com/oazabir/HackerSpray</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <developmentDependency>true</developmentDependency>
+        <description>A .NET library to defend websites and web APIs against brute force and Denial-of-service attacks.
+
+Features:
+
+ * Protect login, registration, password reset pages against brute force and DOS attacks. 
+ * Block users from performing any action too many times. 
+ * Prevent too many hits from any IP or IP Range. 
+ * Blacklist/Whitelist specific IP, IP range, username, URLs, transactions for a period.
+
+An example scenario is a Bank Login page, where brute force password attempts on user accounts and DOS attack on Login page are a regular event. 
+Using this library, you can protect login page from brute force attacks, blocking too many usernames from certain IPs, 
+or too many hits from a range of IP trying to do DOS attack, 
+or even simple 3 invalid login attempts per username, per 15 mins. 
+
+This high performance, very lightweight library protects you from hitting the database too many times on pages and APIs that are prone to attacks, thus lowering web server and database CPU, increasing the scalability of the overall application.
+
+Example code:
+
+var result = await Hacker.DefendAsync("/Account/LogOn", Request.UserHostAddress);
+if (result == Hacker.Result.TooManyHitsFromOrigin)
+    await Hacker.BlacklistOriginAsync(Request.UserHostAddress, TimeSpan.FromMinutes(10));
+else if (result == Hacker.Result.TooManyHitsOnKey)
+    await Hacker.BlacklistKeyAsync("/Account/LogOn", TimeSpan.FromMinutes(10));
+
+.
+.
+.
+Hacker.DefendAsync("/Account/PasswordReset", Request.UserHostAddress, TimeSpan.FromMinutes(5), 100);
+Hacker.DefendAsync("Username" + username, Request.UserHostAddress);
+Hacker.DefendAsync("Comment", Request.UserHostAddress);</description>
+        <summary>A .NET library to protect websites from brute force and DOS attacks</summary>
+        <copyright>Copyright © Omar AL Zabir 2016</copyright>
+        <tags>asp.net, hacker, brute force, DOS</tags>
+        <serviceable>false</serviceable>
+        <dependencies>
+            <group targetFramework=".NETFramework4.5">
+                <dependency id="StackExchange.Redis" version="1.1.603" />
+                <dependency id="redis-64" version="3.0.501" />
+            </group>
+        </dependencies>
+    </metadata>
+    <files>
+        <file src="web.config.transform" target="content\web.config.transform" />
+        <file src="..\..\HackerSpray.WebModule\bin\Release\HackerSpray.Logger.dll" target="lib\HackerSpray.Logger.dll" />
+        <file src="..\..\HackerSpray.WebModule\bin\Release\HackerSpray.Module.dll" target="lib\HackerSpray.Module.dll" />
+        <file src="..\..\HackerSpray.WebModule\bin\Release\HackerSpray.WebModule.dll" target="lib\HackerSpray.WebModule.dll" />
+    </files>
+</package>

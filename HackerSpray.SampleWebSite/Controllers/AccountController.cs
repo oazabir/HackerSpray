@@ -42,8 +42,7 @@ namespace HackerSpray.SampleWebSite.Controllers
             // WARNING: If you load balancer is not passing original client IP
             // through this header, then you will be blocking your load balancer,
             // causing a total outage. Also ensure this Header cannot be spoofed.
-            var originIP = IPAddress.Parse(Request.Headers["X-Forward-For"]
-               ?? Request.UserHostAddress).MapToIPv4();
+            var originIP = Request.GetClientIp();
 
             // Don't forget to do this check!
             if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))

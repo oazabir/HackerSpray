@@ -138,6 +138,11 @@ Run a [Redis](http://redis.io/) node or a [cluster](http://redis.io/topics/clust
 
 That's all!
 
+### Step 4
+
+**Warning!**
+If you have a Load Balancer, then you need to configure the Load Balancer to send the original Client's IP as the Request IP to the webserver. Or it must pass the original Client IP in a ``X-Forwarded-For`` header. **This is very important**. Hacker Spray maintains its counters using the Client IP. If the Client IP is the Load Balancer's IP, not the original Client's IP, then it will lock out the load balancer, causing total outage on your website. 
+
 # Operational Monitoring & Dashboards
 
 ## Logging

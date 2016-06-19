@@ -28,8 +28,8 @@ namespace HackerSpray.WebModule
                 {
                     if (!Initialized)
                     {
-                        Hacker.Logger.LogInformation(ClassName + ' ' + "Initialize");
                         Hacker.Logger = new TraceLogger();
+                        Hacker.Logger.LogInformation(ClassName + ' ' + "Initialize");
                         Hacker.Store = new RedisDefenceStore(HackerSprayConfig.Settings.Redis,
                             HackerSprayConfig.Settings.Prefix,
                             Hacker.Config);
@@ -47,8 +47,7 @@ namespace HackerSpray.WebModule
             // causing a total outage. Also ensure this Header cannot be spoofed.
             // Your load balancer should be configured in a way that it does not accept
             // this header from the request, instead it always sets it itself.
-            var originIP = IPAddress.Parse(context.Request.Headers["X-Forwarded-For"]
-               ?? context.Request.UserHostAddress).MapToIPv4();
+            var originIP = context.Request.GetClientIp();
 
             foreach (var path in HackerSprayConfig.Settings.Paths)
             {
