@@ -246,7 +246,7 @@ namespace HackerSpray.Module
         {
             watch.Stop();
             
-            Trace(LogLevel.Information, name + ':' + ' ' + watch.ElapsedMilliseconds);
+            Trace(LogLevel.Debug, name + ':' + ' ' + watch.ElapsedMilliseconds);
         }
 
         public static void Trace(LogLevel logLevel, string message)

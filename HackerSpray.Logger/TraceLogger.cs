@@ -33,7 +33,7 @@ namespace HackerSpray.Logger
                 string tracemessage = DateTime.Now.ToString("MMM dd HH:mm:ss") + ' ' +
                     Environment.MachineName + ' ' +
                     _TraceSource.Name + ':' + ' ' +
-                    eventType + ' ' +
+                    '[' + eventType + ']' + ' ' +
                     formatter(state, exception);
                 foreach (TraceListener listener in _TraceSource.Listeners)
                 {

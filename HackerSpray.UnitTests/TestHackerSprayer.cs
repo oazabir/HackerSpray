@@ -38,7 +38,7 @@ namespace HackerSpray.UnitTests
             Hacker.Config.MaxHitsPerOriginInterval = TimeSpan.FromMinutes(1);
             Hacker.Config.MaxHitsPerKeyPerOriginInterval = TimeSpan.FromMinutes(1);
 
-            Hacker.Store = new RedisDefenceStore("localhost", "HttpDefenceTest-", Hacker.Config);            
+            Hacker.Store = new RedisDefenceStore("localhost", "HackerSprayUnitTest:", Hacker.Config);            
             //Hacker.Store = new RedisDefenceStore("10.187.146.206:7001,10.187.146.206:7002,10.187.146.206:7003,10.187.146.207:7001,10.187.146.207:7002,10.187.146.207:7003", "HttpDefenceTest-", Hacker.Config);
         }
 

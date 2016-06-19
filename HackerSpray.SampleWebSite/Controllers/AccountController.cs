@@ -28,9 +28,7 @@ namespace HackerSpray.SampleWebSite.Controllers
 		{
 			return View("~/Views/Account/LogOn.cshtml");
         }
-
-        private static readonly bool HackerSprayEnabled = Convert.ToBoolean(ConfigurationManager.AppSettings["HackerSprayEnabled"]);
-
+        
 		//
 		// POST: /Account/LogOn
 
