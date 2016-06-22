@@ -12,14 +12,37 @@ namespace HackerSpray.Module
     {
         public static IPAddress GetClientIp(this HttpRequestBase request)
         {
-            return IPAddress.Parse(request.Headers["X-Forwarded-For"]
-               ?? request.UserHostAddress).MapToIPv4();
+            return GetIPAddress(request.Headers["X-Forwarded-For"], request.UserHostAddress);
         }
 
         public static IPAddress GetClientIp(this HttpRequest request)
         {
-            return IPAddress.Parse(request.Headers["X-Forwarded-For"]
-               ?? request.UserHostAddress).MapToIPv4();
+            return GetIPAddress(request.Headers["X-Forwarded-For"], request.UserHostAddress);
         }
+
+        private static IPAddress GetIPAddress(string header, string hostaddress)
+        {
+            if (string.IsNullOrEmpty(header))
+            {
+                return IPAddress.Parse(hostaddress).MapToIPv4();
+            }
+            else
+            {
+                string[] ipAddress = header.Split(',');
+                string[] ipparts = ipAddress[0].Split(':');
+                IPAddress ipFromHeader;
+                if (IPAddress.TryParse(ipparts[0], out ipFromHeader))
+                {
+                    return ipFromHeader.MapToIPv4();
+                }
+                else
+                {
+                    return IPAddress.Loopback.MapToIPv4();
+                }
+
+            }
+            
+        }
+
     }
 }

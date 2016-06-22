@@ -2,7 +2,7 @@
 
 ![HackerSprayLogo.png](docs/HackerSprayLogo.png) 
 
-**A .NET library to defend websites and web APIs against brute force and Denial-of-service attacks.**
+**A .NET library to defend websites and web APIs against brute force and Denial-of-Service attacks.**
 
 It comes as .NET 4 and .NET Core library.
 
@@ -37,7 +37,7 @@ When ASP.NET code is executing, response time is avg 36ms, as you see on the top
 
 ## Prevent code execution
 
-When Hacker Spray is not blocking request, response code is 403 for invalid logins from Controller, which indicates expensive Login code is getting hit. But as soon as Hacker Spray starts blocking, it responds with 406, right from the httpmodule, thus avoiding hit to Controllers. 
+When HackerSpray starts blocking requests, it blocks from HttpModule responding with Http Response Code 406. In the below graph, you can see when requests are getting blocked, Login code is no longer getting hit. 
 
 ![Response%20Code%20Graph.png](docs/Response%20Code%20Graph.png)
 
@@ -120,15 +120,16 @@ of the code inside the delegate, thus protecting your expensive business logic f
 
 # This is so wrong!
 
-"This is absolutely wrong approach! Why on earth will you do this at application code level? This should be done at firewall level!", you say?
+"This is absolutely wrong approach! Why on earth will you do this at the webserver level? This should be done at firewall level!", you say?
 
 Couple of reasons:
 
- - Firewalls have no intelligence on what business transaction is being performed. Thus you cannot implement brute force check against certain transactions. It is either URL or IP.
- - If a firewall has to implement brute force attack detection, it has to read the whole payload and then inspect for patterns. This requires excessive CPU usage on Firewall. In case of https, it requires you to terminate https at firewall level so that it can read the received data.
- - Most firewalls have simple scripting language to configure rules. Some do support javascript like programming, but check the CPU cost of that and the price tag.
+ - Firewalls have no intelligence on what business transaction is being performed. Thus you cannot implement brute force check against transactions. It is either URL or IP.
+ - If a firewall has to implement brute force attack detection, it has to read the whole payload and then inspect for patterns. This requires high CPU &Aacute; Memory usage on Firewall. In case of https, it requires you to terminate https at firewall level so that it can read the received data.
+ - Most firewalls have basic scripting language to configure rules. Some do support javascript like language, but check the CPU cost of that and the price tag. With HackerSpray, you get .net code, so the sky is the limit.
+ - Firewalls have limited storage for logs and shipping logs from firewall to analysis engines puts stress on the firewall, especially when you are under attack. Many a times we experience Firewall CPU exhaustion when it is blocking DOS, while it is writing all those attacks in a log and also shipping the logs to our analysis servers. 
 
-With that being said, you should use Firewall for certain cases and Hacker Spray for different cases. You should use Firewall to limit maximum number of connects per IP, maximum number of connections opened to a webserver, rate limit, blacklisted IP and URLs. More than that, go for HackerSpray. It is better to perform CPU intensive operations at webserver level, because you have plenty of them. Usually you have only one active firewall and thus best not to put CPU intensive operation on them. 
+With that being said, you should use Firewall for certain cases and Hacker Spray for different cases. You should use Firewall to limit maximum number of connections per IP, maximum number of connections opened to a webserver, rate limit, blacklisted IP and URLs. More than that, go for HackerSpray. It is better to perform CPU intensive operations at webserver level, because you have plenty of them. Usually you have only one active firewall and thus best not to put CPU intensive operation on them. 
 
 
 
@@ -144,10 +145,6 @@ For .NET Core, use:
     Install-Package HackerSprayCore
 
 Or you can just drop the Hacker.XXX.dll files in the bin folder and proceed with the configuration.
-
-## Source code
-
-``Hacker.WebModule`` project contains ``HackerSprayHttpModule``, which you can use to implement configuration driven centralized defense for the entire website.
 
 ## Using Hacker Spray
 ### Step 1
