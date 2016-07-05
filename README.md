@@ -256,6 +256,15 @@ The log shows you how long ``Hacker.Defend`` function is taking to execute, whic
 
 
 
+.NET core logs in this format:
+
+```
+HackerSpray:Debug: Defend: 1310
+HackerSpray:Debug: Defend Result: Allowed
+HackerSpray:Debug: Defend End: /Account/Login 1348
+```
+
+
 ## FAQ
 
 ### Cannot connect to redis

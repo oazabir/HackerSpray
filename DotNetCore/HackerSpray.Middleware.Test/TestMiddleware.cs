@@ -51,7 +51,7 @@ namespace HackerSpray.Middleware.Test
                {
                    var loggerFactory = app.ApplicationServices.GetService<ILoggerFactory>();
                    loggerFactory.AddConsole(config.GetSection("Logging"));
-                   loggerFactory.AddDebug();
+                   loggerFactory.AddDebug(LogLevel.Debug);
 
                    app.UseXForwardedFor();
                    app.UseHackerSpray();

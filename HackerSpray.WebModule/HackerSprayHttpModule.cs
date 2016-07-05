@@ -36,12 +36,8 @@ namespace HackerSpray.WebModule
         {
             var context = ((HttpApplication)sender).Context;
 
-            Trace.TraceInformation(ClassName +" Before DefendURL: " + context.Request.Path);
-
             Hacker.Result result = await HackerSprayWebDefence.DefendURL(context);
             var resultName = Enum.GetName(typeof(Hacker.Result), result);
-
-            Trace.TraceInformation(ClassName + " After DefendURL: " + context.Request.Path + " Result: " + resultName);
 
             if (result != Hacker.Result.Allowed)
             {

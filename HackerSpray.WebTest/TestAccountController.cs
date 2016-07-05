@@ -31,6 +31,16 @@ namespace HackerSpray.WebTest
             Hacker.Store = new RedisDefenceStore(HackerSprayConfig.Settings.Redis,
                             HackerSprayConfig.Settings.Prefix,
                             Hacker.Config);
+
+            Hacker.ClearAllHitsAsync();
+            Hacker.ClearBlacklistsAsync();
+        }
+
+        [TestCleanup]
+        public void Cleanup()
+        {
+            Hacker.ClearAllHitsAsync();
+            Hacker.ClearBlacklistsAsync();
         }
 
         private AccountController GetAccountController()

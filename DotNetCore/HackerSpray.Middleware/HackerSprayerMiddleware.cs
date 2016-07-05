@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Configuration;
 using HackerSpray.Module;
 using System.Net;
+using System.Diagnostics;
 
 namespace HackerSpray.Middleware
 {
@@ -84,10 +85,12 @@ namespace HackerSpray.Middleware
         public async Task Invoke(HttpContext context)
         {
             var path = context.Request.Path;
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
 
             if (path.HasValue)
             {
-                Debug("Handling request: " + path);
+                Debug("Defend Begin: " + path);
 
                 // This handles load balancers passing the original client IP
                 // through this header. 
@@ -136,6 +139,9 @@ namespace HackerSpray.Middleware
                     }
                 }
 
+                watch.Stop();
+                Debug("Defend End: " + path + " " + watch.ElapsedMilliseconds);
+
                 if (result == Hacker.Result.Allowed)
                     await _next.Invoke(context);
                 else
@@ -146,7 +152,8 @@ namespace HackerSpray.Middleware
                     await context.Response.WriteAsync(Enum.GetName(typeof(Hacker.Result), result));
                 }
 
-                Debug("Finished: " + path);
+                //watch.Stop();
+                //Debug("Finished: " + path + " " + watch.ElapsedMilliseconds);
             }
             else
             {
@@ -161,8 +168,7 @@ namespace HackerSpray.Middleware
 
         private void Debug(string msg)
         {
-            if (_logger.IsEnabled(LogLevel.Debug))
-                _logger.LogDebug(msg);
+            _logger.LogDebug(msg);
         }
     }
 }

@@ -21,6 +21,8 @@ namespace HackerSpray.WebModule
         public static async Task<Hacker.Result> DefendURL(HttpContext context)
         {
             Hacker.Result result = Hacker.Result.Allowed;
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
 
             if (!Initialized)
             {
@@ -55,7 +57,7 @@ namespace HackerSpray.WebModule
                     || (!path.Post && context.Request.HttpMethod == "GET")
                     && path.Name == context.Request.Path)
                 {
-                    Hacker.Logger.LogInformation(ClassName + ' ' + "Path matched: " + context.Request.Path);
+                    Hacker.Logger.LogDebug(ClassName + ' ' + "Path matched: " + context.Request.Path);
                     if (path.Mode == "key")
                     {
                         result = await Hacker.DefendAsync(context.Request.Path, originIP,
@@ -92,7 +94,9 @@ namespace HackerSpray.WebModule
                     break;
                 }
             }
-                        
+
+            watch.Stop();
+            Hacker.Logger.LogDebug(ClassName + ' ' + "DefendURL: " + context.Request.Path + " " + watch.ElapsedMilliseconds);
             return result;
         }
     }
