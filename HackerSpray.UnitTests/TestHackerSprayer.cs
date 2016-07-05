@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace HackerSpray.UnitTests
 {
@@ -39,7 +40,7 @@ namespace HackerSpray.UnitTests
             Hacker.Config.MaxHitsPerKeyPerOriginInterval = TimeSpan.FromMinutes(1);
 
             Hacker.Store = new RedisDefenceStore("localhost", "HackerSprayUnitTest:", Hacker.Config);            
-            //Hacker.Store = new RedisDefenceStore("10.187.146.206:7001,10.187.146.206:7002,10.187.146.206:7003,10.187.146.207:7001,10.187.146.207:7002,10.187.146.207:7003", "HttpDefenceTest-", Hacker.Config);
+            //Hacker.Store = new RedisDefenceStore("10.187.147.120:61149", "AuthTest:", Hacker.Config);
         }
 
         [TestCleanup]
@@ -471,6 +472,43 @@ namespace HackerSpray.UnitTests
                 Assert.AreEqual(Hacker.Result.Allowed,
                     Hacker.DefendAsync("TestOriginRangeBlocking", ip).Run(),
                     ip.ToString() + " must be allowed when there's no blacklisting"));
+        }
+
+        [TestMethod]
+        public void ClearAllHits()
+        {
+            Func<string> keyGenerator = () => { return "ClearAllHits" + GetRandomKey(); };
+            var keys = new List<string>();
+            var random = new Random((int)DateTime.Now.Ticks);
+            var startTime = DateTime.Now;
+
+            Parallel.For(0, 10,
+                hit =>
+                {
+                    var key = keyGenerator();
+                    keys.Add(key);
+
+                    var hits = 1 + random.Next(Hacker.Config.MaxHitsPerKey-1);
+
+                    for (var i = 0; i < hits; i++)
+                    {
+                        Assert.AreEqual(
+                            Hacker.Result.Allowed,
+                            Hacker.DefendAsync(key, GetRandomIP()).Run(),
+                            "Request must be allowed for a hit on a key");
+                    }
+
+                    Assert.AreEqual(hits, Hacker.GetHitsForKey(key).Run(),
+                        "Number of hits must be " + hits + " for key: " + key);
+                });
+
+            Hacker.ClearAllHitsAsync().Run();
+
+            foreach(var key in keys)
+            {
+                Assert.AreEqual(0, Hacker.GetHitsForKey(key).Run(),
+                        "After clearing hits Number of hits must be 0 for key: " + key);
+            }
         }
     }
 }

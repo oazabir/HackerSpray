@@ -68,7 +68,7 @@ namespace HackerSpray.Module
             // for empty sorted set, we need to add an item with 0 score
             if (await this.db.SortedSetLengthAsync(this.prefix + BLACKLIST_ORIGIN_RANGE) == 0)
                 await this.db.SortedSetAddAsync(this.prefix + BLACKLIST_ORIGIN_RANGE, "0-0", 0);
-
+            
             return await this.db.SortedSetAddAsync(this.prefix + BLACKLIST_ORIGIN_RANGE, originStart + "-" + originEnd, originStart);
         }
 
@@ -254,14 +254,30 @@ namespace HackerSpray.Module
             return true;
         }
 
-        async Task<bool> IDefenceStore.ClearAllHits()
+        Task<bool> IDefenceStore.ClearAllHits()
         {
-            var keys = await this.db.ListRangeAsync(this.prefix + KEY_LIST);
+            var keys = new List<RedisKey>();
             List<Task> tasks = new List<Task>();
-            foreach (var key in keys)
-                tasks.Add(this.db.KeyDeleteAsync((RedisKey)key.ToString()));
-            await Task.WhenAll(tasks);
-            return await this.db.KeyDeleteAsync(this.prefix + KEY_LIST);            
+                
+            foreach (var endpoint in redis.GetEndPoints())
+            {
+                // get the target server
+                var server = redis.GetServer(endpoint);
+
+                // show all keys in database 0 that include "foo" in their name
+                foreach (var key in server.Keys(pattern: this.prefix+"key:*"))
+                {
+                    keys.Add(key);
+                    tasks.Add(this.db.KeyDeleteAsync(key.ToString()));
+                }
+                foreach (var key in server.Keys(pattern: this.prefix + "origin:*"))
+                {
+                    keys.Add(key);
+                    tasks.Add(this.db.KeyDeleteAsync(key.ToString()));
+                }
+            }
+            tasks.Add(this.db.KeyDeleteAsync(this.prefix + KEY_LIST));
+            return Task.WhenAll(tasks).ContinueWith(t => Task.FromResult(true)).Unwrap();
         }
     }
 }
