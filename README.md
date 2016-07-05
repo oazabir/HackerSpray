@@ -254,7 +254,13 @@ The log shows you how long ``Hacker.Defend`` function is taking to execute, whic
 
 ## Measuring performance impact 
 
+In .NET 4 version, look for this in the log:
 
+```
+[Verbose] Defend: 1
+```
+
+This records how many milliseconds it has taken to perform the ``Defend`` operation.
 
 .NET core logs in this format:
 

@@ -15,6 +15,9 @@ using System.Net;
 using Microsoft.AspNetCore.Http.Features;
 using HackerSpray.Module;
 using System.Threading;
+using Serilog;
+using System.IO;
+using Serilog.Sinks.RollingFile;
 
 namespace HackerSpray.Middleware.Test
 {
@@ -46,12 +49,20 @@ namespace HackerSpray.Middleware.Test
 
             builder.AddEnvironmentVariables();
             var config = builder.Build();
+
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .Enrich.FromLogContext()
+                .WriteTo.RollingFile("C:\\inetpub\\logs\\LogFiles\\log-{Date}.txt")
+                .CreateLogger();
+
             var bldr = new WebHostBuilder()
                .Configure(app =>
                {
                    var loggerFactory = app.ApplicationServices.GetService<ILoggerFactory>();
                    loggerFactory.AddConsole(config.GetSection("Logging"));
                    loggerFactory.AddDebug(LogLevel.Debug);
+                   loggerFactory.AddSerilog();
 
                    app.UseXForwardedFor();
                    app.UseHackerSpray();
