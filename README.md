@@ -257,7 +257,7 @@ The log shows you how long ``Hacker.Defend`` function is taking to execute, whic
 In .NET 4 version, look for this in the log:
 
 ```
-[Verbose] Defend: 1
+Jun 19 12:06:49 hostname HackerSpray: [Verbose] Defend: 1
 ```
 
 This records how many milliseconds it has taken to perform the ``Defend`` operation.
@@ -265,30 +265,35 @@ This records how many milliseconds it has taken to perform the ``Defend`` operat
 .NET core logs in this format:
 
 ```
-HackerSpray:Debug: Defend: 1310
-HackerSpray:Debug: Defend Result: Allowed
-HackerSpray:Debug: Defend End: /Account/Login 1348
+2016-07-06 00:52:13.471 +01:00 [Debug] Defend Begin: /Account/Login
+2016-07-06 00:52:13.472 +01:00 [Debug] Defend: /Account/Login
+2016-07-06 00:52:13.474 +01:00 [Debug] Defend Result: Allowed
+2016-07-06 00:52:13.475 +01:00 [Debug] Defend End: /Account/Login 3
+2016-07-06 00:52:13.475 +01:00 [Information] Request finished in 5.6397ms 200 
 ```
 
+Look for ``Defend End``. You can see how long the .NET Core Middleware has taken to perform the defence. 
 
 ## FAQ
 
 ### Cannot connect to redis
 
- - Check if redis server running.
- - Check if you can telnet in to the redis port. 
  - Check if port is configured properly in connection string.
+ - Check if you can telnet in to the redis port. 
+ - Check if the version of StackExchange.Redis client being used supports the Redis server or configuration you have deployed.
 
 ### Logging does not work
 
- - 
+ - Incorrect path in configuration.
+ - The folder does not have write permission for the user running your app.
+ - Correct minimum level not set in config.
 
 ### Invalid Login attemps are not getting blocked
 
+ You haven't implemented the HackerSpray check on the AccountController. See the sample controller code on how to do this.
+
 ### Hacker Spray is not blocking any request after too many hits
 
-Make sure the HttpModule (.net 4) or the Middleware (.net core) has been properly registered. 
-
-For .net core, see the sample project's Startup.cs how to proper register it. It is very important you register the middleware right after StaticFile handler. 
-
-Ensure you haven't set the numbers too high in configuration.
+ - Make sure the HttpModule (.net 4) or the Middleware (.net core) has been properly registered. The Middleware must be registered right after ``app.UseStaticFiles`` and before ``app.UseMvc``.
+ - For .net core, see the sample project's Startup.cs how to proper register it. It is very important you register the middleware right after StaticFile handler. 
+ - Ensure you haven't set the numbers too high in configuration.
