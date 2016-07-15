@@ -1,0 +1,12 @@
+﻿2016-07-11 20:47:13.200 +01:00 [Fatal] Application startup exception
+StackExchange.Redis.RedisConnectionException: It was not possible to connect to the redis server(s); to create a disconnected multiplexer, disable AbortOnConnectFail. SocketFailure on PING
+   at StackExchange.Redis.ConnectionMultiplexer.ConnectImpl(Func`1 multiplexerFactory, TextWriter log)
+   at HackerSpray.Module.RedisDefenceStore..ctor(String connectionString, String prefix, DefenceConfig config) in E:\GitHub\HackerSpray\DotNetCore\HackerSpray.Module\RedisDefenceStore.cs:line 33
+   at HackerSpray.Middleware.HackerSprayerMiddleware..ctor(RequestDelegate next, ILoggerFactory loggerFactory, HackerSprayOption option) in E:\GitHub\HackerSpray\DotNetCore\HackerSpray.Middleware\HackerSprayerMiddleware.cs:line 41
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Microsoft.Extensions.Internal.ActivatorUtilities.ConstructorMatcher.CreateInstance(IServiceProvider provider)
+   at Microsoft.Extensions.Internal.ActivatorUtilities.CreateInstance(IServiceProvider provider, Type instanceType, Object[] parameters)
+   at Microsoft.AspNetCore.Builder.UseMiddlewareExtensions.<>c__DisplayClass3_0.<UseMiddleware>b__0(RequestDelegate next)
+   at Microsoft.AspNetCore.Builder.Internal.ApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Hosting.Internal.WebHost.BuildApplication()

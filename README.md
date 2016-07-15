@@ -118,9 +118,7 @@ HackerSpray will then maintain success and failure counters.
 If there are too many success or failed attempt as per the configuration, it will block further execution 
 of the code inside the delegate, thus protecting your expensive business logic from attacks. 
 
-# This is so wrong!
-
-"This is absolutely wrong approach! Why on earth will you do this at the webserver level? This should be done at firewall level!", you say?
+# Why not use a firewall?
 
 Couple of reasons:
 
@@ -132,23 +130,100 @@ Couple of reasons:
 With that being said, you should use Firewall for certain cases and Hacker Spray for different cases. You should use Firewall to limit maximum number of connections per IP, maximum number of connections opened to a webserver, rate limit, blacklisted IP and URLs. More than that, go for HackerSpray. It is better to perform CPU intensive operations at webserver level, because you have plenty of them. Usually you have only one active firewall and thus best not to put CPU intensive operation on them. 
 
 
-
-
 # Getting Started
-## Nuget
+
+### .NET 4
+
 Get the Hacker Spray library and HTTP Module to defend your website using:
 
     Install-Package HackerSpray
 
+It will do all the configuration to enable HackerSpray for your web project.
+
+### .NET core
 For .NET Core, use:
 
     Install-Package HackerSprayCore
 
-Or you can just drop the Hacker.XXX.dll files in the bin folder and proceed with the configuration.
+It will do *nothing* to enable HackerSpray for your web project. You need to do the following:
 
-## Using Hacker Spray
-### Step 1
-In the ``web.config`` you need to specify which paths to protect using the ``HttpModule``, if you are planning to use the HttpModule. 
+Step 1: Add hackerspray.json in the configuration
+
+```
+{
+  "HackerSpray": {
+    "Redis": "127.0.0.1",
+    "Prefix": "AuthTest-Core:",
+    "Keys": [
+      "POST /Account/Login 100 00:10:00 key+origin",
+      "GET /Account/Login 100 00:10:00 key+origin",
+      "GET /Home/ 10000 00:10:00 key+origin"
+    ]
+  }
+}
+```
+
+On your Startup.cs, load this config file:
+
+```
+var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+Add this line--> .AddJsonFile("hackerspray.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+```
+
+Step 2: Add the Hacker Spray service in Startup.cs
+
+```
+public void ConfigureServices(IServiceCollection services)
+{
+    
+    .
+    .
+    services.AddHackerSpray(Configuration.GetSection("HackerSpray"));
+}
+```
+
+
+Step 3: Add HackerSpray middleware in Startup.service
+
+Add app.UseXForwardedFor(); and app.UseHackerSpray(); right after UseStaticFiles() and before UseMvc();
+
+```
+public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+{
+    .
+    .
+    .
+
+    app.UseStaticFiles();
+    
+    app.UseXForwardedFor();
+    app.UseHackerSpray();
+
+    .
+    .
+    .
+    
+    app.UseMvc(routes =>
+    {
+        routes.MapRoute(
+            name: "default",
+            template: "{controller=Home}/{action=Index}/{id?}");
+    });
+    
+}
+```
+
+
+## Run Redis server
+
+If you have installed from Nuget, redis will be downloaded and stored in ``packages`` folder.
+
+# Configuring HackerSpray
+
+In the ``web.config`` or ``hackerspray.json`` you need to specify which paths to protect using the ``HttpModule`` or ``Middleware``:
 
 ```xml
 <HackerSprayConfig redis="localhost" prefix="AuthTest:">
@@ -171,25 +246,10 @@ In the ``web.config`` you need to specify which paths to protect using the ``Htt
       - _perorigin_ - While checking hits to this key, if the origin IP has produced more than the maxAttempts hit overall on any key, then block. For ex, allow 1000 hits per IP, to any key, but do this check on Login page hit.
       - _perkeyorigin_ - Count hits to this key, per IP. For example, 1000 hits per IP on the Login page. 
 
-### Step 2
-Add the Hacker Spray ``HttpModule`` in web.config:
-
-```c#
-<system.webServer>    
-    <modules runAllManagedModulesForAllRequests="true">
-      <remove name="HackerSprayHttpModule" />
-      <add name="HackerSprayHttpModule" type="Hacker.WebModule.HackerSprayHttpModule" />
-    </modules>    
-  </system.webServer>
-```
-
-### Step 3
 
 Run a [Redis](http://redis.io/) node or a [cluster](http://redis.io/topics/cluster-tutorial) of Redis nodes. Provide the redis connection string in IP:host form in the web.config. If you are running multiple nodes in the cluster, provide IP:host for all nodes. 
 
 That's all!
-
-### Step 4
 
 **Warning!**
 If you have a Load Balancer, then you need to configure the Load Balancer to send the original Client's IP as the Request IP to the webserver. Or it must pass the original Client IP in a ``X-Forwarded-For`` header. **This is very important**. Hacker Spray maintains its counters using the Client IP. If the Client IP is the Load Balancer's IP, not the original Client's IP, then it will lock out the load balancer, causing total outage on your website. 
@@ -297,3 +357,8 @@ Look for ``Defend End``. You can see how long the .NET Core Middleware has taken
  - Make sure the HttpModule (.net 4) or the Middleware (.net core) has been properly registered. The Middleware must be registered right after ``app.UseStaticFiles`` and before ``app.UseMvc``.
  - For .net core, see the sample project's Startup.cs how to proper register it. It is very important you register the middleware right after StaticFile handler. 
  - Ensure you haven't set the numbers too high in configuration.
+
+
+### HackerSpray is blocking all requests
+
+ - If you have a load balancer, make sure it is generating X-Forwarded-For header containing the original Client IP. Otherwise HackerSpray sees the load balancer as the client and blocks it. 

@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package>
+    <metadata minClientVersion="3.3.0">
+        <id>HackerSprayCore</id>
+        <version>1.0.25-alpha</version>
+        <title>HackerSpray .NET Core</title>
+        <authors>Omar AL Zabir</authors>
+        <licenseUrl>https://github.com/oazabir/HackerSpray</licenseUrl>
+        <projectUrl>https://github.com/oazabir/HackerSpray</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>A .NET Core library to defend websites and web APIs against brute force and Denial-of-service attacks.
+
+.NET 4 version also available. 
+
+Features:
+
+ * Protect login, registration, password reset pages against brute force and DOS attacks. 
+ * Block users from performing any action too many times. 
+ * Prevent too many hits from any IP or IP Range. 
+ * Blacklist/Whitelist specific IP, IP range, username, URLs, transactions for a period.
+
+An example scenario is a Bank Login page, where brute force password attempts on user accounts and DOS attack on Login page are a regular event. 
+Using this library, you can protect login page from brute force attacks, blocking too many usernames from certain IPs, 
+or too many hits from a range of IP trying to do DOS attack, 
+or even simple 3 invalid login attempts per username, per 15 mins. 
+
+This high performance, very lightweight library protects you from hitting the database too many times on pages and APIs that are prone to attacks, thus lowering web server and database CPU, increasing the scalability of the overall application.
+
+Example code:
+
+var result = await Hacker.DefendAsync("/Account/LogOn", Request.UserHostAddress);
+if (result == Hacker.Result.TooManyHitsFromOrigin)
+    await Hacker.BlacklistOriginAsync(Request.UserHostAddress, TimeSpan.FromMinutes(10));
+else if (result == Hacker.Result.TooManyHitsOnKey)
+    await Hacker.BlacklistKeyAsync("/Account/LogOn", TimeSpan.FromMinutes(10));
+
+.
+.
+.
+Hacker.DefendAsync("/Account/PasswordReset", Request.UserHostAddress, TimeSpan.FromMinutes(5), 100);
+Hacker.DefendAsync("Username" + username, Request.UserHostAddress);
+Hacker.DefendAsync("Comment", Request.UserHostAddress);
+
+
+
+# Getting started with HackerSpray
+
+## Step 1: Add hackerspray.json in the configuration
+
+{
+  "HackerSpray": {
+    "Redis": "127.0.0.1",
+    "Prefix": "AuthTest-Core:",
+    "Keys": [
+      "POST /Account/Login 100 00:10:00 key+origin",
+      "GET /Account/Login 100 00:10:00 key+origin",
+      "GET /Home/ 10000 00:10:00 key+origin"
+    ]
+  }
+}
+
+On your Startup.cs, load this config file:
+
+var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+Add this line--> .AddJsonFile("hackerspray.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+
+
+## Step 2: Add the Hacker Spray service in Startup.cs
+
+public void ConfigureServices(IServiceCollection services)
+{
+    .
+    .
+    .
+    .
+    services.AddHackerSpray(Configuration.GetSection("HackerSpray"));
+}
+
+
+## Step 3: Add HackerSpray middleware in Startup.service
+
+Add app.UseXForwardedFor(); and app.UseHackerSpray(); right after UseStaticFiles() and before UseMvc();
+
+public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+{
+    .
+    .
+    .
+
+    app.UseStaticFiles();
+    
+    app.UseXForwardedFor();
+    app.UseHackerSpray();
+
+    .
+    .
+    .
+    
+    app.UseMvc(routes =>
+    {
+        routes.MapRoute(
+            name: "default",
+            template: "{controller=Home}/{action=Index}/{id?}");
+    });
+    
+}
+
+## Step 4: Configure hackerspray.json
+
+{
+  "HackerSpray": {
+    "Redis": "127.0.0.1",
+    "Prefix": "AuthTest-Core:",
+    "Keys": [
+      "POST /Account/Login 100 00:10:00 key+origin",
+      "GET /Account/Login 100 00:10:00 key+origin",
+      "GET /Home/ 10000 00:10:00 key+origin"
+    ]
+  }
+}
+
+</description>
+        <summary>A .NET Core library to protect websites from brute force and DOS attacks</summary>
+        <copyright>Copyright © Omar AL Zabir 2016</copyright>
+        <tags>asp.net, hacker, brute force, DOS</tags>
+        <dependencies>
+            <group targetFramework=".NETStandard1.6">
+                <dependency id="StackExchange.Redis" version="1.1.604-alpha" />
+            </group>
+            <group targetFramework="netcoreapp1.0">
+                <dependency id="StackExchange.Redis" version="1.1.604-alpha" />
+            </group>
+        </dependencies>
+        <!-- Build actions for items in the contentFiles folder -->
+        <contentFiles>
+            <!-- Include Assets as Content -->
+            <files include="**/**/readme.txt" buildAction="EmbeddedResource" copyToOutput="true"/>
+            <files include="**/**/hackerspray.json" buildAction="EmbeddedResource" copyToOutput="true"/>
+        </contentFiles>
+    </metadata>
+    
+</package>

@@ -1,0 +1,11 @@
+﻿{
+  "HackerSpray": {
+    "Redis": "127.0.0.1",
+    "Prefix": "AuthTest-Core:",
+    "Keys": [
+      "POST /Account/Login 100 00:10:00 key+origin",
+      "GET /Account/Login 100 00:10:00 key+origin",
+      "GET /Home/ 10000 00:10:00 key+origin"
+    ]
+  }
+}

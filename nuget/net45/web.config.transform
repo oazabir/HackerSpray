@@ -1,9 +1,11 @@
 <?xml version="1.0"?>
 <configuration>
+	
 	<configSections>
 		<section name="HackerSprayConfig" type="HackerSpray.WebModule.HackerSprayConfig,	 
 			HackerSpray.WebModule" />
 	</configSections>
+
 	
 	<system.diagnostics>
 		<sources>
@@ -19,6 +21,7 @@
 		</switches>
 		<trace autoflush="true" indentsize="4" />
 	</system.diagnostics>
+
 	
 	<HackerSprayConfig redis="localhost" prefix="AuthTest:" >
 		<keys>
@@ -28,10 +31,12 @@
 		</keys>
 	</HackerSprayConfig>
 	
+
 	<system.webServer>
 		<modules>
 			<remove name="HackerSprayHttpModule" />
 			<add name="HackerSprayHttpModule" type="HackerSpray.WebModule.HackerSprayHttpModule" />
 		</modules>
 	</system.webServer>
+
 </configuration>
