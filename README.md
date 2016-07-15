@@ -1,4 +1,4 @@
-# Hacker Spray
+# HackerSpray
 
 ![HackerSprayLogo.png](docs/HackerSprayLogo.png) 
 
@@ -25,13 +25,13 @@ This high performance, very lightweight library protects you from hitting the da
 Let's compare the performance of a Login page which does authentication with a database. 
 
 ## Server throughput increase
-When attack is going on and expensive .net code is getting hit, you get high CPU and low throughput. But as soon as Hacker Spray starts blocking traffic, CPU on webserve goes down and server throughput shots high up.
+When attack is going on and expensive .net code is getting hit, you get high CPU and low throughput. But as soon as HackerSpray starts blocking traffic, CPU on webserve goes down and server throughput shots high up.
 
 ![Server%20throughput.png](docs/Server%20throughput.png)
 
 ## Response time 
 
-When ASP.NET code is executing, response time is avg 36ms, as you see on the top 2 lines. But when Hacker Spray is blocking requests, response time is low, at around 8ms. 
+When ASP.NET code is executing, response time is avg 36ms, as you see on the top 2 lines. But when HackerSpray is blocking requests, response time is low, at around 8ms. 
 
 ![Response%20Time%20Graph.png](docs/Response%20Time%20Graph.png)
 
@@ -43,9 +43,9 @@ When HackerSpray starts blocking requests, it blocks from HttpModule responding 
 
 # How it works
 
-Hacker Spray uses Redis to maintain high-performance counters for actions and origin IPs. 
-Clients call ``Hacker.Defend(key, ip)`` to check if a certain key or IP has made too many hits. 
-Clients can maintain blacklists for key, IP or IP Range. 
+HackerSpray uses Redis to maintain high-performance counters for actions and origin IPs. 
+You call ``Hacker.Defend(key, ip)`` to check if a certain key or IP has made too many hits. 
+You can maintain blacklists for key, IP or IP Range. 
 HackerSpray checks against too many hits on a key, too many hits on an IP, or IP falling within blacklists. 
 It also allows blacklisting a certain key for a certain IP or blocking a certain key for all IPs on-the-fly. 
 Handy when you want to block a user out of certain URLs. 
@@ -69,7 +69,7 @@ Hacker.DefendAsync("Username" + username, Request.UserHostAddress);
 Hacker.DefendAsync("Comment", Request.UserHostAddress);
 ```
 
-Hacker Spray is a fully non-blocking IO, .NET 4.5 async library, maximizing use of Redis pipeline to produce least amount of network traffic and latency. It uses the ``StackExchange.Redis`` client.
+HackerSpray is a fully non-blocking IO, .NET 4.5 async library, maximizing use of Redis pipeline to produce least amount of network traffic and latency. It uses the ``StackExchange.Redis`` client.
 
 There's a convenient ``DefendAsync`` overload for ASP.NET Controllers. Here's an example how you can protect the Login() method:
 
@@ -127,14 +127,14 @@ Couple of reasons:
  - Most firewalls have basic scripting language to configure rules. Some do support javascript like language, but check the CPU cost of that and the price tag. With HackerSpray, you get .net code, so the sky is the limit.
  - Firewalls have limited storage for logs and shipping logs from firewall to analysis engines puts stress on the firewall, especially when you are under attack. Many a times we experience Firewall CPU exhaustion when it is blocking DOS, while it is writing all those attacks in a log and also shipping the logs to our analysis servers. 
 
-With that being said, you should use Firewall for certain cases and Hacker Spray for different cases. You should use Firewall to limit maximum number of connections per IP, maximum number of connections opened to a webserver, rate limit, blacklisted IP and URLs. More than that, go for HackerSpray. It is better to perform CPU intensive operations at webserver level, because you have plenty of them. Usually you have only one active firewall and thus best not to put CPU intensive operation on them. 
+With that being said, you should use Firewall for certain cases and HackerSpray for different cases. You should use Firewall to limit maximum number of connections per IP, maximum number of connections opened to a webserver, rate limit, blacklisted IP and URLs. More than that, go for HackerSpray. It is better to perform CPU intensive operations at webserver level, because you have plenty of them. Usually you have only one active firewall and thus best not to put CPU intensive operation on them. 
 
 
 # Getting Started
 
 ### .NET 4
 
-Get the Hacker Spray library and HTTP Module to defend your website using:
+Get the HackerSpray library and HTTP Module to defend your website using:
 
     Install-Package HackerSpray
 
@@ -173,7 +173,7 @@ Add this line--> .AddJsonFile("hackerspray.json", optional: true, reloadOnChange
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
 ```
 
-Step 2: Add the Hacker Spray service in Startup.cs
+Step 2: Add the HackerSpray service in Startup.cs
 
 ```
 public void ConfigureServices(IServiceCollection services)
@@ -252,7 +252,7 @@ Run a [Redis](http://redis.io/) node or a [cluster](http://redis.io/topics/clust
 That's all!
 
 **Warning!**
-If you have a Load Balancer, then you need to configure the Load Balancer to send the original Client's IP as the Request IP to the webserver. Or it must pass the original Client IP in a ``X-Forwarded-For`` header. **This is very important**. Hacker Spray maintains its counters using the Client IP. If the Client IP is the Load Balancer's IP, not the original Client's IP, then it will lock out the load balancer, causing total outage on your website. 
+If you have a Load Balancer, then you need to configure the Load Balancer to send the original Client's IP as the Request IP to the webserver. Or it must pass the original Client IP in a ``X-Forwarded-For`` header. **This is very important**. HackerSpray maintains its counters using the Client IP. If the Client IP is the Load Balancer's IP, not the original Client's IP, then it will lock out the load balancer, causing total outage on your website. 
 
 
 # Operational Monitoring & Dashboards
@@ -267,7 +267,7 @@ On this view, HackerSprayUnitTest is a prefix used to store all entries in Redis
 
 Underneath it, there's ``key`` and ``origin``. Key contains all the keys that are now being blocked. For example, here you see User-38889 has been blacklisted.
 
-Under ``origin``, you see all the IPs that have been blacklisted from performing any hit to the URLs protected by Hacker Spray.
+Under ``origin``, you see all the IPs that have been blacklisted from performing any hit to the URLs protected by HackerSpray.
 
 If you want to add a new IP to be blacklisted, you just add an entry here.
 
@@ -352,7 +352,7 @@ Look for ``Defend End``. You can see how long the .NET Core Middleware has taken
 
  You haven't implemented the HackerSpray check on the AccountController. See the sample controller code on how to do this.
 
-### Hacker Spray is not blocking any request after too many hits
+### HackerSpray is not blocking any request after too many hits
 
  - Make sure the HttpModule (.net 4) or the Middleware (.net core) has been properly registered. The Middleware must be registered right after ``app.UseStaticFiles`` and before ``app.UseMvc``.
  - For .net core, see the sample project's Startup.cs how to proper register it. It is very important you register the middleware right after StaticFile handler. 
@@ -362,3 +362,9 @@ Look for ``Defend End``. You can see how long the .NET Core Middleware has taken
 ### HackerSpray is blocking all requests
 
  - If you have a load balancer, make sure it is generating X-Forwarded-For header containing the original Client IP. Otherwise HackerSpray sees the load balancer as the client and blocks it. 
+
+# License
+
+Free for non-commercial and education use. 
+
+For commercial use, donate $50 per production server to your favorite charity and email me evidence of donation in order to get a license ``omaralzabir at gmail dot com``
