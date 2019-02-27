@@ -53,8 +53,8 @@ namespace HackerSpray.WebModule
 
             foreach (var path in HackerSprayConfig.Settings.Paths)
             {
-                if ((path.Post && context.Request.HttpMethod == "POST")
-                    || (!path.Post && context.Request.HttpMethod == "GET")
+                if (((path.Post && context.Request.HttpMethod == "POST")
+                    || (!path.Post && context.Request.HttpMethod == "GET"))
                     && path.Name == context.Request.Path)
                 {
                     Hacker.Logger.LogDebug(ClassName + ' ' + "Path matched: " + context.Request.Path);
